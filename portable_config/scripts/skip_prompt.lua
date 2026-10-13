@@ -5,7 +5,7 @@ local assdraw=require 'mp.assdraw'
 local overlay=mp.create_osd_overlay('ass-events')
 overlay.z=1001
 local cue,box,hover,bound=nil,nil,false,false
-local labels={intro='Пропустить: Заставку',recap='Пропустить: Ранее в сериале',credits='Пропустить: Титры'}
+local labels={intro='Пропустить: Заставку',recap='Пропустить: Ранее в сериале',credits='Пропустить: Титры',preview='Пропустить: Анонс'}
 local draw
 local function clicked()
     local t=mp.get_property_number('time-pos',-1)
@@ -26,7 +26,7 @@ draw=function()
         return
     end
     local scale=math.max(0.65,math.min(2,h/720))
-    local widths=ui.language()=='en' and {intro=165,recap=180,credits=195} or {intro=280,recap=360,credits=245}
+    local widths=ui.language()=='en' and {intro=165,recap=180,credits=195,preview=195} or {intro=280,recap=360,credits=245,preview=245}
     local bw=widths[cue.kind]*scale
     local bh=46*scale
     local x1=w-25*scale

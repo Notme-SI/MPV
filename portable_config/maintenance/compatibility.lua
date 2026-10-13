@@ -33,6 +33,7 @@ local function tests()
     dofile(path('maintenance/ui-tests.lua'))(path)
     dofile(path('maintenance/interface-tests.lua'))(path)
     dofile(path('maintenance/title-tests.lua'))(path)
+    dofile(path('maintenance/anime-tests.lua'))(path)
     dofile(path('maintenance/title-runtime-tests.lua'))(path)
     dofile(path('maintenance/playback-tests.lua'))(path)
 

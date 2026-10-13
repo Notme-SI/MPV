@@ -2,6 +2,7 @@ local utils=require 'mp.utils'
 local root=mp.command_native({'expand-path','~~/'})
 local fmt=dofile(root..'/extensions/title_format.lua')
 local ui=dofile(root..'/extensions/ui_locale.lua')
+local anime=dofile(root..'/extensions/anime_identity.lua')
 local opts={enabled=true,online=true,tmdb_api_key=''}
 require('mp.options').read_options(opts,'readable_titles')
 local token=opts.tmdb_api_key~='' and opts.tmdb_api_key or dofile(root..'/extensions/tmdb_client.lua')
@@ -12,15 +13,8 @@ local display_details={}
 local requests,cache,pending={},{},{}
 local cache_order={}
 local timer
-local anime_index
 local function is_anime(title)
-    if not anime_index then
-        local file=io.open(root..'/scripts/autochapters/anime.json','rb')
-        if file then
-            anime_index=utils.parse_json(file:read('*a')) or {};file:close()
-        else return false end
-    end
-    return anime_index[fmt.normalize(title)]~=nil
+    return anime.enrich(title,{title=title,kind='tv'}).anime
 end
 local function encode(s) return tostring(s):gsub('[^%w%-._~]',function(c) return string.format('%%%02X',c:byte()) end) end
 local function cancel()
@@ -70,7 +64,7 @@ local function identity()
         if not data.season and type(guess.season)=='number' then data.season=guess.season end
         if data.episode then data.kind='tv' end
     end
-    return data,raw
+    return anime.enrich(raw,data),raw
 end
 local function refresh()
     if not active or not opts.enabled then return end

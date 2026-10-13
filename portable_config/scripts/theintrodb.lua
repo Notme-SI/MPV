@@ -71,6 +71,10 @@ end
 -- ---------------------------------------------------------------------------
 local ui=dofile(mp.command_native({'expand-path','~~/extensions/ui_locale.lua'}))
 ui.install_messages()
+local config_root=mp.command_native({'expand-path','~~/'})
+local title_format=dofile(config_root..'/extensions/title_format.lua')
+local anime_identity=dofile(config_root..'/extensions/anime_identity.lua')
+local skip_segments=dofile(config_root..'/extensions/skip_segments.lua')
 local ru_kind = {intro="Заставка", recap="Ранее в сериале", credits="Титры", preview="Анонс"}
 local tidb = {
     media = nil,          -- parsed API response
@@ -344,7 +348,7 @@ end
 build_segments = function(data)
     local duration = mp.get_property_number("duration") or 0
     -- Merge AniSkip data for this file into the existing uosc skip button.
-    -- Prefer AniSkip for matching kinds; keep TheIntroDB-only kinds available.
+    -- Keep one online anime source, then prefer matching embedded chapters.
     local combined = {}
     for key, value in pairs(data or {}) do combined[key] = value end
     for _, name in ipairs({'SkipDB','IntroDB'}) do
@@ -352,10 +356,10 @@ build_segments = function(data)
             if not combined[kind] or #combined[kind]==0 then combined[kind]=list end
         end
     end
+    local merged = {}
     local key = (mp.get_property('path') or '') .. '|' .. tostring(mp.get_property_number('playlist-pos', -1))
     if mp.get_property_native('user-data/autochapters-media') == key then
         local times = mp.get_property_native('user-data/autochapters') or {}
-        local merged = {}
         for _, pair in ipairs({{'op','intro'}, {'mixed-op','intro'}, {'ed','credits'}, {'mixed-ed','credits'}, {'recap','recap'}}) do
             local seg = times[pair[1]]
             local start = type(seg) == 'table' and tonumber(seg.start)
@@ -366,9 +370,10 @@ build_segments = function(data)
                 merged[kind][#merged[kind]+1] = {start_ms=start*1000, end_ms=finish*1000}
             end
         end
-        for kind, list in pairs(merged) do combined[kind] = list end
     end
-    data = combined
+    local native=mp.get_property_native('user-data/file-chapters',{})
+    local local_segments=native.key==key and skip_segments.from_chapters(native.chapters,duration,title_format.normalize) or {}
+    data=skip_segments.combine(combined,merged,local_segments)
     tidb.segments = {}
     for _, kind in ipairs({ "intro", "recap", "credits", "preview" }) do
         tidb.segments_by_kind[kind] = {}
@@ -568,13 +573,13 @@ local last_button_state = nil
 local function send_button(seg)
     local label = seg and (ru_kind[seg.kind] or seg.kind) or nil
     mp.set_property_native('user-data/skip-prompt', seg or {})
-    local key = seg and (seg.kind .. ':' .. tostring(seg.start)) or 'none'
+    local key = ui.language()..':'..(seg and (seg.kind .. ':' .. tostring(seg.start)) or 'none')
     if key == last_button_state then return end
     last_button_state = key
     mp.commandv('script-message-to', 'uosc', 'set-button', 'theintrodb', utils.format_json({
         icon = 'fast_forward', active = seg ~= nil,
         badge = false,
-        tooltip = label and ('Пропустить: ' .. label .. ' (Alt+I - заставка)') or 'Заставки и титры (Ctrl+I)',
+        tooltip = seg and ui.text('Пропустить: '..(seg.kind=='intro' and 'Заставку' or label)) or ui.text('Заставки и титры (Ctrl+I)'),
         command = seg and 'script-binding theintrodb/theintrodb-skip-next'
             or 'script-binding theintrodb/theintrodb-toggle-ui',
     }))
@@ -593,18 +598,18 @@ end
 show_overlay = function()
     local items = {}
     for i, seg in ipairs(tidb.segments) do
-        local finish = seg['end'] and fmt_time(seg['end']) or 'конец'
+        local finish = seg['end'] and fmt_time(seg['end']) or ui.text('конец')
         items[#items + 1] = {
-            title = 'Пропустить: ' .. (seg.kind == 'intro' and 'Заставку' or ru_kind[seg.kind] or seg.kind),
+            title = ui.text('Пропустить: ' .. (seg.kind == 'intro' and 'Заставку' or ru_kind[seg.kind] or seg.kind)),
             hint = fmt_time(seg.start) .. ' → ' .. finish,
             value = {'script-message-to', 'theintrodb', 'skip-segment', tostring(i)},
         }
     end
     if #items == 0 then
-        items[1] = {title = 'Для этой серии таймкоды не найдены', selectable = false}
+        items[1] = {title = ui.text('Для этой серии таймкоды не найдены'), selectable = false}
     end
     mp.commandv('script-message-to', 'uosc', 'open-menu', utils.format_json({
-        type = 'theintrodb', title = 'Заставки и титры', items = items,
+        type = 'theintrodb', title = ui.text('Заставки и титры'), items = items,
     }))
 end
 
@@ -770,6 +775,9 @@ local function auto_detect(file_key, filename)
         end
         return
     end
+    -- AniSkip identifies anime seasons separately. A generic TMDB top hit can
+    -- refer to another adaptation or season; use the verified anime path instead.
+    if anime_identity.enrich(filename,title_format.parse(filename)).anime then return end
     local title, year, is_tv, ep_hint = parse_title_for_search(filename)
     if not title or title == "" then
         mp.msg.info("Не удалось определить название для поиска заставок", 3)
@@ -904,6 +912,13 @@ end
 
 mp.observe_property('user-data/autochapters', 'native', function()
     if tidb.file_key then build_segments(tidb.media or {}) end
+end)
+mp.observe_property('user-data/file-chapters','native',function()
+    if tidb.file_key then build_segments(tidb.media or {}) end
+end)
+mp.observe_property('user-data/interface-language','string',function()
+    last_button_state=nil;update_overlay()
+    if mp.get_property_native('user-data/uosc/menu/type')=='theintrodb' then show_overlay() end
 end)
 mp.register_event("file-loaded", on_file_loaded)
 -- also react to end-file to clean overlay

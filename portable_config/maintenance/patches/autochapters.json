@@ -26,5 +26,77 @@
   {
     "before": "local input = require \"mp.input\"",
     "after": "local ui=dofile(mp.command_native({'expand-path','~~/extensions/ui_locale.lua'}))\nui.install_messages()\nlocal input = require \"mp.input\""
+  },
+  {
+    "before": "local encoding = require \"encoding\"",
+    "after": "local encoding = require \"encoding\"\nlocal root=mp.command_native({'expand-path','~~/'})\nlocal title_format=dofile(root..'/extensions/title_format.lua')\nlocal anime_identity=dofile(root..'/extensions/anime_identity.lua')"
+  },
+  {
+    "before": "local lookup_key\nlocal function current_lookup()",
+    "after": "-- Capture original file chapters before any script creates online chapters.\nmp.add_hook('on_preloaded',20,function()\n    mp.set_property_native('user-data/file-chapters',{key=media_key(),chapters=mp.get_property_native('chapter-list',{})})\nend)\nlocal lookup_key\nlocal function current_lookup()"
+  },
+  {
+    "before": "        data.input = path",
+    "after": "        data.input = mp.get_property(\"path\")\n        data.filename = path"
+  },
+  {
+    "before": "    return data.title, data.episode",
+    "after": "    local parsed=title_format.parse(path)\n    parsed=anime_identity.enrich(path,parsed)\n    return parsed.anime and parsed.title or data.title, parsed.episode or data.episode, parsed.season or data.season"
+  },
+  {
+    "before": "local function api_lookup(title, episode, duration, auto)",
+    "after": "local function api_lookup(title, episode, duration, auto, season)"
+  },
+  {
+    "before": "    local mal_id = anime[encoding.key(title)]\n    if not mal_id then return end",
+    "after": "    local identity=anime_identity.enrich(title,{title=title,episode=episode,season=season,kind='tv'},anime_identity.index(anime))\n    local mal_id=identity.mal_id\n    if not mal_id or not episode or episode<1 then return end"
+  },
+  {
+    "before": "(\" — серия \" .. display_episode)",
+    "after": "(\" - серия \" .. display_episode)"
+  },
+  {
+    "before": "                if not prior or delta < prior.delta then best[seg.skipType]={delta=delta,segment=seg} end",
+    "after": "                if delta<=20 and (not prior or delta<prior.delta) then best[seg.skipType]={delta=delta,segment=seg} end"
+  },
+  {
+    "before": "    local chapters = options.keep_previous_chapters and mp.get_property_native(\"chapter-list\") or {}",
+    "after": "    local original=mp.get_property_native('user-data/file-chapters',{})\n    local embedded=original.key==media_key() and original.chapters or {}\n    local chapters = options.keep_previous_chapters and embedded or {}"
+  },
+  {
+    "before": "    if options.create_chapters and (not options.search_only_when_chapters_missing or chapter_count == 0) then",
+    "after": "    if options.create_chapters and #embedded==0 then"
+  },
+  {
+    "before": "    local title, episode = guess(media_title, auto)",
+    "after": "    local title, episode, season = guess(media_title, auto)"
+  },
+  {
+    "before": "    local found = api_lookup(title, episode, duration, auto)",
+    "after": "    local found = api_lookup(title, episode, duration, auto, season)"
+  },
+  {
+    "before": "mp.register_event('end-file', function()\n    mp.set_property_native('user-data/autochapters', {})",
+    "after": "mp.register_event('end-file', function()\n    mp.set_property_native('user-data/file-chapters', {})\n    mp.set_property_native('user-data/autochapters', {})"
+  },
+  {
+    "before": "(\" — серия \" .. episode)",
+    "after": "(\" - серия \" .. episode)"
+  },
+  {
+    "before": "local anime, relations, borked",
+    "after": "local anime, relations, borked, anime_index"
+  },
+  {
+    "before": "anime, relations, borked = new_anime, new_relations, false",
+    "after": "anime, relations, borked, anime_index = new_anime, new_relations, false, nil"
+  },
+  {
+    "before": "    local identity=anime_identity.enrich(title,{title=title,episode=episode,season=season,kind='tv'},anime_identity.index(anime))",
+    "after": "    anime_index=anime_index or anime_identity.index(anime)\n    local identity=anime_identity.enrich(title,{title=title,episode=episode,season=season,kind='tv'},anime_index)"
+  },
+  {
+    "before": "    local chapters = options.keep_previous_chapters and embedded or {}\n    local chapter_count = #chapters",
+    "after": "    local chapters = {}"
   }
 ]

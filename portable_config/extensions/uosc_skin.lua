@@ -17,6 +17,7 @@ return function(script_directory)
         local original=assert(loadfile(script_directory..'/lib/menus.lua'))()
         local create=create_self_updating_menu_opener
         local fmt=dofile(mp.command_native({'expand-path','~~/extensions/title_format.lua'}))
+        local anime=dofile(mp.command_native({'expand-path','~~/extensions/anime_identity.lua'}))
         function create_self_updating_menu_opener(opts)
             if opts.type=='sub' then
                 local serialize,activate,key=opts.serializer,opts.on_activate,opts.on_key
@@ -46,7 +47,7 @@ return function(script_directory)
                     local meta=mp.get_property_native('user-data/readable-title',{})
                     local lang=meta.language or 'ru'
                     for _,row in ipairs(rows) do
-                        local data=fmt.parse(row.title)
+                        local data=anime.enrich(row.title,fmt.parse(row.title))
                         if data.title~='' or data.episode then
                             local same=meta.source_title and fmt.normalize(data.title)==fmt.normalize(meta.source_title)
                             local ep=same and data.season==meta.season and meta.episodes and meta.episodes[tostring(data.episode)]
@@ -177,7 +178,7 @@ return function(script_directory)
                 end
                 local _,chapter=itable_find(state.chapters,function(c) return seconds>=c.time end,#state.chapters,1)
                 if chapter and not chapter.is_end_only then
-                    ass:tooltip(anchor,ui.text(chapter.title_wrapped),{size=self.font_size,offset=2*s,responsive=false,
+                    ass:tooltip(anchor,ui.chapter_text(chapter.title_wrapped),{size=self.font_size,offset=2*s,responsive=false,
                         width_overwrite=chapter.title_wrapped_width*self.font_size,lines=chapter.title_lines,margin=2*s})
                 end
             end

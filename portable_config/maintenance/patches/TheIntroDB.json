@@ -74,5 +74,61 @@
   {
     "before": "title = 'Пропустить: ' .. (ru_kind[seg.kind] or seg.kind),",
     "after": "title = 'Пропустить: ' .. (seg.kind == 'intro' and 'Заставку' or ru_kind[seg.kind] or seg.kind),"
+  },
+  {
+    "before": "ui.install_messages()\nlocal ru_kind",
+    "after": "ui.install_messages()\nlocal config_root=mp.command_native({'expand-path','~~/'})\nlocal title_format=dofile(config_root..'/extensions/title_format.lua')\nlocal anime_identity=dofile(config_root..'/extensions/anime_identity.lua')\nlocal skip_segments=dofile(config_root..'/extensions/skip_segments.lua')\nlocal ru_kind"
+  },
+  {
+    "before": "    local key = (mp.get_property('path') or '') .. '|' .. tostring(mp.get_property_number('playlist-pos', -1))\n    if mp.get_property_native('user-data/autochapters-media') == key then",
+    "after": "    local merged = {}\n    local key = (mp.get_property('path') or '') .. '|' .. tostring(mp.get_property_number('playlist-pos', -1))\n    if mp.get_property_native('user-data/autochapters-media') == key then"
+  },
+  {
+    "before": "        local merged = {}\n        for _, pair",
+    "after": "        for _, pair"
+  },
+  {
+    "before": "        for kind, list in pairs(merged) do combined[kind] = list end\n    end\n    data = combined",
+    "after": "    end\n    local native=mp.get_property_native('user-data/file-chapters',{})\n    local local_segments=native.key==key and skip_segments.from_chapters(native.chapters,duration,title_format.normalize) or {}\n    data=skip_segments.combine(combined,merged,local_segments)"
+  },
+  {
+    "before": "    local key = seg and (seg.kind .. ':' .. tostring(seg.start)) or 'none'",
+    "after": "    local key = ui.language()..':'..(seg and (seg.kind .. ':' .. tostring(seg.start)) or 'none')"
+  },
+  {
+    "before": "        tooltip = label and ('Пропустить: ' .. label .. ' (Alt+I - заставка)') or 'Заставки и титры (Ctrl+I)',",
+    "after": "        tooltip = seg and ui.text('Пропустить: '..(seg.kind=='intro' and 'Заставку' or label)) or ui.text('Заставки и титры (Ctrl+I)'),"
+  },
+  {
+    "before": "        local finish = seg['end'] and fmt_time(seg['end']) or 'конец'",
+    "after": "        local finish = seg['end'] and fmt_time(seg['end']) or ui.text('конец')"
+  },
+  {
+    "before": "            title = 'Пропустить: ' .. (seg.kind == 'intro' and 'Заставку' or ru_kind[seg.kind] or seg.kind),",
+    "after": "            title = ui.text('Пропустить: ' .. (seg.kind == 'intro' and 'Заставку' or ru_kind[seg.kind] or seg.kind)),"
+  },
+  {
+    "before": "type = 'theintrodb', title = 'Заставки и титры', items = items,",
+    "after": "type = 'theintrodb', title = ui.text('Заставки и титры'), items = items,"
+  },
+  {
+    "before": "    local title, year, is_tv, ep_hint = parse_title_for_search(filename)",
+    "after": "    -- AniSkip identifies anime seasons separately. A generic TMDB top hit can\n    -- refer to another adaptation or season; use the verified anime path instead.\n    if anime_identity.enrich(filename,title_format.parse(filename)).anime then return end\n    local title, year, is_tv, ep_hint = parse_title_for_search(filename)"
+  },
+  {
+    "before": "mp.register_event(\"file-loaded\", on_file_loaded)",
+    "after": "mp.observe_property('user-data/file-chapters','native',function()\n    if tidb.file_key then build_segments(tidb.media or {}) end\nend)\nmp.observe_property('user-data/interface-language','string',function()\n    last_button_state=nil;update_overlay()\n    if mp.get_property('user-data/uosc/menu/type')=='theintrodb' then show_overlay() end\nend)\nmp.register_event(\"file-loaded\", on_file_loaded)"
+  },
+  {
+    "before": "    -- Prefer AniSkip for matching kinds; keep TheIntroDB-only kinds available.",
+    "after": "    -- Keep one online anime source, then prefer matching embedded chapters."
+  },
+  {
+    "before": "items[1] = {title = 'Для этой серии таймкоды не найдены', selectable = false}",
+    "after": "items[1] = {title = ui.text('Для этой серии таймкоды не найдены'), selectable = false}"
+  },
+  {
+    "before": "mp.get_property('user-data/uosc/menu/type')",
+    "after": "mp.get_property_native('user-data/uosc/menu/type')"
   }
 ]

@@ -67,6 +67,13 @@ function M.text(value,language)
     if label and exact[label] then return M.text(label,language)..suffix end
     return value
 end
+-- Translate standard chapter labels only in chapter UI, never media titles.
+function M.chapter_text(value,language)
+    local names={opening='Заставка (OP)',op='Заставка (OP)',ending='Титры (ED)',ed='Титры (ED)',
+        intro='Заставка',credits='Титры',recap='Ранее в сериале',preview='Анонс'}
+    local label=type(value)=='string' and names[value:lower():match('^%s*(.-)%s*$')]
+    return M.text(label or value,language)
+end
 local interface_menus={menu=true,keybinds=true,['player-timeline-style']=true,['player-icons']=true,
     ['interface-language']=true,['picture-controls']=true,['language-defaults']=true,['audio-memory']=true,
     autocrop=true,['autocrop-settings']=true,theintrodb=true,['subtitle-memory']=true,['network-playback']=true}
@@ -77,7 +84,8 @@ function M.menu(data)
         for k,v in pairs(node) do copy[k]=v end
         local command=type(node.value)=='table' and node.value[1] or node.value
         local special=type(command)=='string' and command:match('^%{')
-        if is_menu or interface_menus[kind] or node.items or special then copy.title=M.text(node.title) end
+        if is_menu or interface_menus[kind] or node.items or special then copy.title=M.text(node.title)
+        elseif kind=='chapters' then copy.title=M.chapter_text(node.title) end
         -- Track and file titles are never translated. Only their standard UI metadata is.
         copy.hint=M.text(node.hint)
         copy.footnote=M.text(node.footnote)

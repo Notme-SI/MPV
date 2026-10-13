@@ -85,6 +85,13 @@ return function(path)
         assert(props.aid==3 and props.sid==2,'Metadata must not change selected tracks')
         assert(props['media-title']==props.playlist[1].title,'Anime source title preserved')
         events['end-file']()
+        props['user-data/interface-language']='ru'
+        props['media-title']='01. Kusuriya no Hitorigoto 3 (WEBRip 1080p).mkv'
+        props.playlist[1].title=props['media-title']
+        events['file-loaded']();tick()
+        assert(props['user-data/readable-title'].text=='Монолог фармацевта · Сезон 3, серия 1','Leading episode filename uses the same localized series')
+        assert(props['user-data/readable-title'].source_title=='Kusuriya no Hitorigoto')
+        events['end-file']()
     end,debug.traceback)
     mp=real;package.loaded['mp.options']=options
     assert(ok,err)

@@ -141,7 +141,7 @@ return function(extend)
             else y=by end
             local badges={}
             if self.current_chapter then
-                badges[#badges+1]={kind='chapter',text=self.current_chapter.index..': '..ui.text(self.current_chapter.title)}
+                badges[#badges+1]={kind='chapter',text=self.current_chapter.index..': '..ui.chapter_text(self.current_chapter.title)}
             end
             for _,badge in ipairs(T.metadata.badges or {}) do badges[#badges+1]=badge end
             if #badges>0 and state.duration and state.time then

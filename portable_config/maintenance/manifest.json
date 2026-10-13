@@ -21,7 +21,7 @@
       "remotePath": "autochapters/main.lua",
       "path": "scripts/autochapters/main.lua",
       "version": "3fafabb55cb0168f711acfd6aa5da42fc6e34d8a",
-      "installedHash": "3f545da5581adfbc38b8038ac6b137d2431d277265bcad5c92ef28dee8682952",
+      "installedHash": "573439fc2aa943a782a936a064f64525030e5c7640ffa278f2c969d11206df61",
       "patchFile": "patches/autochapters.json"
     },
     {
@@ -52,7 +52,7 @@
       "remotePath": "scripts/theintrodb.lua",
       "path": "scripts/theintrodb.lua",
       "version": "d88e3dd899e75fc00df31ce9e7072b6891e05135",
-      "installedHash": "72c95c2891227db34503b56e0d2457097cb7bbb2b1a3974456f3f61c08fa0abe",
+      "installedHash": "c022765cf63284814ee1612a1de97a52ed62191f20015b48ba3e951551726618",
       "patchFile": "patches/TheIntroDB.json"
     },
     {

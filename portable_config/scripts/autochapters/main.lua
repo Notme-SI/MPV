@@ -12,6 +12,9 @@ local ui=dofile(mp.command_native({'expand-path','~~/extensions/ui_locale.lua'})
 ui.install_messages()
 local input = require "mp.input"
 local encoding = require "encoding"
+local root=mp.command_native({'expand-path','~~/'})
+local title_format=dofile(root..'/extensions/title_format.lua')
+local anime_identity=dofile(root..'/extensions/anime_identity.lua')
 
 local options = {
     create_chapters = true,
@@ -30,6 +33,10 @@ local guessit_path = utils.join_path(script_dir, 'bin/guessit.exe')
 local function media_key()
     return (mp.get_property('path') or '') .. '|' .. tostring(mp.get_property_number('playlist-pos', -1))
 end
+-- Capture original file chapters before any script creates online chapters.
+mp.add_hook('on_preloaded',20,function()
+    mp.set_property_native('user-data/file-chapters',{key=media_key(),chapters=mp.get_property_native('chapter-list',{})})
+end)
 local lookup_key
 local function current_lookup() return lookup_key == media_key() end
 
@@ -46,7 +53,7 @@ local db_url = "https://github.com/manami-project/anime-offline-database/release
 local relations_url = "https://github.com/erengy/anime-relations/raw/master/anime-relations.txt"
 local placeholder_title = ""
 
-local anime, relations, borked
+local anime, relations, borked, anime_index
 local json_path = utils.join_path(script_dir, "anime.json")
 local relations_path = utils.join_path(script_dir, "relations.json")
 
@@ -71,7 +78,8 @@ local function guess(path, auto)
     end
 
     if auto then
-        data.input = path
+        data.input = mp.get_property("path")
+        data.filename = path
         mp.set_property_native("user-data/guessit", data)
     end
 
@@ -87,7 +95,9 @@ local function guess(path, auto)
         data.episode = data.episode[1]
     end
 
-    return data.title, data.episode
+    local parsed=title_format.parse(path)
+    parsed=anime_identity.enrich(path,parsed)
+    return parsed.anime and parsed.title or data.title, parsed.episode or data.episode, parsed.season or data.season
 end
 
 local function time_sort(a, b)
@@ -107,7 +117,7 @@ end
 
 local file_load
 local database = require('database').new(script_dir, options.db_update_days, function(new_anime, new_relations)
-    anime, relations, borked = new_anime, new_relations, false
+    anime, relations, borked, anime_index = new_anime, new_relations, false, nil
     if file_load and not mp.get_property_bool('idle-active', true) then
         mp.add_timeout(0, file_load)
     end
@@ -142,7 +152,7 @@ local function read_json(path)
     end
 end
 
-local function api_lookup(title, episode, duration, auto)
+local function api_lookup(title, episode, duration, auto, season)
     if borked then return end
 
     if anime == nil or relations == nil then
@@ -164,8 +174,10 @@ local function api_lookup(title, episode, duration, auto)
         normalized._normalized = true
         anime = normalized
     end
-    local mal_id = anime[encoding.key(title)]
-    if not mal_id then return end
+    anime_index=anime_index or anime_identity.index(anime)
+    local identity=anime_identity.enrich(title,{title=title,episode=episode,season=season,kind='tv'},anime_index)
+    local mal_id=identity.mal_id
+    if not mal_id or not episode or episode<1 then return end
 
     local relation_title
     local in_episode = episode
@@ -175,7 +187,7 @@ local function api_lookup(title, episode, duration, auto)
     local display_episode = relation_title and episode or in_episode
 
     if not auto then
-        mp.osd_message("Поиск: " .. (relation_title or title) .. (display_episode and (" — серия " .. display_episode) or "") .. "...")
+        mp.osd_message("Поиск: " .. (relation_title or title) .. (display_episode and (" - серия " .. display_episode) or "") .. "...")
     end
 
     local function lookup(length)
@@ -196,7 +208,7 @@ local function api_lookup(title, episode, duration, auto)
             if start and finish and start>=0 and finish>start and (duration<=0 or finish<=duration+5) then
                 local prior=best[seg.skipType]
                 local delta=math.abs((tonumber(seg.episodeLength) or duration)-duration)
-                if not prior or delta < prior.delta then best[seg.skipType]={delta=delta,segment=seg} end
+                if delta<=20 and (not prior or delta<prior.delta) then best[seg.skipType]={delta=delta,segment=seg} end
             end
         end
     end
@@ -211,8 +223,9 @@ local function api_lookup(title, episode, duration, auto)
 
     if not current_lookup() then return end
 
-    local chapters = options.keep_previous_chapters and mp.get_property_native("chapter-list") or {}
-    local chapter_count = #chapters
+    local original=mp.get_property_native('user-data/file-chapters',{})
+    local embedded=original.key==media_key() and original.chapters or {}
+    local chapters = {}
     local times = {}
 
     for _, skip in ipairs(data.results) do
@@ -227,7 +240,7 @@ local function api_lookup(title, episode, duration, auto)
         end
     end
 
-    if options.create_chapters and (not options.search_only_when_chapters_missing or chapter_count == 0) then
+    if options.create_chapters and #embedded==0 then
         table.sort(chapters, time_sort)
         mp.set_property_native("chapter-list", chapters)
     end
@@ -240,12 +253,12 @@ end
 
 local function find_chapters(media_title, auto)
     lookup_key = media_key()
-    local title, episode = guess(media_title, auto)
+    local title, episode, season = guess(media_title, auto)
     if not title then return end
 
     local duration = mp.get_property_number("duration", 0)
 
-    local found = api_lookup(title, episode, duration, auto)
+    local found = api_lookup(title, episode, duration, auto, season)
 
     if not found and current_lookup() then
         mp.set_property_native("user-data/autochapters", {})
@@ -272,6 +285,7 @@ file_load = function()
     find_chapters(placeholder_title, true)
 end
 mp.register_event('end-file', function()
+    mp.set_property_native('user-data/file-chapters', {})
     mp.set_property_native('user-data/autochapters', {})
     mp.set_property('user-data/autochapters-media', '')
 end)
@@ -287,7 +301,7 @@ local function search()
                 mp.add_timeout(0.05, function()
                     local found, title, episode = find_chapters(media_title)
                     if not found then
-                        msg.info("Таймкоды не найдены: " .. (title and (title .. (episode and (" — серия " .. episode) or "")) or media_title))
+                        msg.info("Таймкоды не найдены: " .. (title and (title .. (episode and (" - серия " .. episode) or "")) or media_title))
                     end
                 end)
             else

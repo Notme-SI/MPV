@@ -21,6 +21,7 @@
 **/cache/
 **/watch_later/
 **/audio-preferences.json
+**/subtitle-preferences.json
 **/window-state.json
 **/*backup*/
 *.log

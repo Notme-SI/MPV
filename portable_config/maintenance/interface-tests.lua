@@ -18,6 +18,11 @@ return function(path)
     local menu={type='menu',items={{title='Изображение',value=command},{title='TorrServer',value='noop'}}}
     assert(ui.menu(menu).items[1].title=='Picture')
     assert(menu.items[1].title=='Изображение' and ui.menu(menu).items[1].value==command,'Menu copy preserves commands')
+    local updated=ui.menu(menu)
+    assert(#ui.menu(updated).items==#updated.items,'Old menu migration must be idempotent')
+    assert(#menu.items==2,'Personal menu source must not be mutated')
+    assert(ui.menu({type='network-playback',items={{title='Запас видео'}}}).items[1].title=='Buffered video')
+    assert(ui.menu({type='subtitle-memory',items={{title='Сохранённый выбор'}}}).items[1].title=='Saved preference')
     for _,kind in ipairs({'playlist','sub','audio','open-file'}) do
         local source={type=kind,title='Субтитры',items={{title='Изображение',value='file.mkv'},
             {title='Выключить субтитры',value='{disable}'}}}

@@ -14,4 +14,4 @@ $output=[IO.File]::ReadAllText($log)+[IO.File]::ReadAllText($err)
 if($process.ExitCode -ne 0 -or $output -notmatch 'MPV_EXTENSIONS_OK' -or $output -match 'MPV_EXTENSIONS_FAILED|Lua error|stack traceback') {
     throw "Расширения не прошли проверку. Установка отменена. Отчёт: $work`n$output"
 }
-Write-Host 'Проверено: языки, названия, автообрезка, TorrServer и интерфейсы дополнений.'
+Write-Host 'Проверено: языки, названия, субтитры, восстановление потока, автообрезка, TorrServer и интерфейсы дополнений.'

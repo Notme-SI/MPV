@@ -949,5 +949,165 @@
   {
     "en": "Skip: Credits (Alt+I - intro)",
     "ru": "Пропустить: Титры (Alt+I - заставка)"
+  },
+  {
+    "ru": "Сеть и буфер",
+    "en": "Network and buffer"
+  },
+  {
+    "ru": "Не удалось сохранить настройки сети",
+    "en": "Could not save network settings"
+  },
+  {
+    "ru": "Не удалось восстановить поток. Проверьте сеть или TorrServer.",
+    "en": "Could not reconnect. Check your network or TorrServer."
+  },
+  {
+    "ru": "Восстановление потока: попытка %d. Esc - отменить",
+    "en": "Reconnecting: attempt %d. Esc to cancel"
+  },
+  {
+    "ru": "Повторное подключение",
+    "en": "Reconnecting"
+  },
+  {
+    "ru": "Ошибка подключения",
+    "en": "Connection failed"
+  },
+  {
+    "ru": "Открытие потока",
+    "en": "Opening stream"
+  },
+  {
+    "ru": "Нет воспроизведения",
+    "en": "Nothing playing"
+  },
+  {
+    "ru": "Ожидание данных",
+    "en": "Waiting for data"
+  },
+  {
+    "ru": "Восстановление после обрыва",
+    "en": "Reconnect after interruption"
+  },
+  {
+    "ru": "Настройки mpv",
+    "en": "mpv defaults"
+  },
+  {
+    "ru": "Стандартный",
+    "en": "Standard"
+  },
+  {
+    "ru": "До 60 с / 256 МБ",
+    "en": "Up to 60 s / 256 MB"
+  },
+  {
+    "ru": "Увеличенный",
+    "en": "Larger"
+  },
+  {
+    "ru": "До 180 с / 512 МБ",
+    "en": "Up to 180 s / 512 MB"
+  },
+  {
+    "ru": "Запас видео",
+    "en": "Buffered video"
+  },
+  {
+    "ru": "Буфер плеера",
+    "en": "Player buffer"
+  },
+  {
+    "ru": "Скорость чтения",
+    "en": "Read speed"
+  },
+  {
+    "ru": "Пропущено кадров",
+    "en": "Dropped frames"
+  },
+  {
+    "ru": "Разница аудио и видео",
+    "en": "Audio/video difference"
+  },
+  {
+    "ru": "Нет ответа",
+    "en": "No response"
+  },
+  {
+    "ru": "Подключён",
+    "en": "Connected"
+  },
+  {
+    "ru": "Загрузка TorrServer",
+    "en": "TorrServer download"
+  },
+  {
+    "ru": "Пиры / сиды",
+    "en": "Peers / seeds"
+  },
+  {
+    "ru": "Отменить восстановление",
+    "en": "Cancel reconnection"
+  },
+  {
+    "ru": "Буфер помогает при кратких просадках сети. Новый размер действует со следующего открытия файла.",
+    "en": "Buffering helps with brief network slowdowns. The new size applies from the next file opening."
+  },
+  {
+    "ru": "Не удалось сохранить выбор субтитров",
+    "en": "Could not save subtitle preference"
+  },
+  {
+    "ru": "Субтитры сериала",
+    "en": "Series subtitles"
+  },
+  {
+    "ru": "Запоминать выбранные субтитры",
+    "en": "Remember selected subtitles"
+  },
+  {
+    "ru": "Сохранённый выбор",
+    "en": "Saved preference"
+  },
+  {
+    "ru": "Сохраняет дорожку и отключение. Если подходящей дорожки нет, используются языки по умолчанию.",
+    "en": "Remembers the track and disabling subtitles. Language defaults apply if no matching track is available."
+  },
+  {
+    "ru": "Нет данных",
+    "en": "Unavailable"
+  },
+  {
+    "ru": "с",
+    "en": "s"
+  },
+  {
+    "ru": "МБ",
+    "en": "MB"
+  },
+  {
+    "ru": "МБ/с",
+    "en": "MB/s"
+  },
+  {
+    "ru": "Воспроизведение",
+    "en": "Playing"
+  },
+  {
+    "ru": "Пауза",
+    "en": "Paused"
+  },
+  {
+    "ru": "Буфер",
+    "en": "Buffer"
+  },
+  {
+    "ru": "Авто",
+    "en": "Auto"
+  },
+  {
+    "ru": "Состояние",
+    "en": "Status"
   }
 ]

@@ -38,4 +38,7 @@ maintenance/compatibility.lua - проверки перед установкой
 Стиль и метки: script-opts/player_ui.conf. Субтитры: scripts/subtitle_controls.lua.
 Названия: readable_titles.lua, title_format.lua. Изображение: picture_controls.lua.
 Язык интерфейса: scripts/interface_language.lua, extensions/ui_locale.lua и interface-translations.json.
+Сеть и буфер: scripts/network_playback.lua, script-opts/network_playback.conf.
+Память субтитров: scripts/subtitle_memory.lua и личный subtitle-preferences.json.
+При сохранённом старом input.conf новые пункты меню добавляются расширением интерфейса.
 Эти файлы не заменяются при обновлении сторонних плагинов.

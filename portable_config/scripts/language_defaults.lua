@@ -84,6 +84,7 @@ mp.register_script_message('choose',function(key,value)
     if saved then options[key]=value; saved=save_settings() end
     publish()
     if saved and key=='subtitles' then
+        mp.set_property_number('user-data/subtitle-memory-ignore-until',mp.get_time()+1)
         mp.set_property('sid','auto')
         mp.commandv('script-message-to','sub_select','select-subtitles')
     end

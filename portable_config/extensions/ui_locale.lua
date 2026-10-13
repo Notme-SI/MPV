@@ -69,7 +69,7 @@ function M.text(value,language)
 end
 local interface_menus={menu=true,keybinds=true,['player-timeline-style']=true,['player-icons']=true,
     ['interface-language']=true,['picture-controls']=true,['language-defaults']=true,['audio-memory']=true,
-    autocrop=true,['autocrop-settings']=true,theintrodb=true}
+    autocrop=true,['autocrop-settings']=true,theintrodb=true,['subtitle-memory']=true,['network-playback']=true}
 function M.menu(data)
     local kind=data.type
     local function walk(node,is_menu)
@@ -97,7 +97,28 @@ function M.menu(data)
         end
         return copy
     end
-    return walk(data,true)
+    local result=walk(data,true)
+    -- Add local features to older personal menus without rewriting input.conf.
+    if kind=='menu' and result.items then
+        local function has(node,binding)
+            if type(node.value)=='table' and node.value[1]=='script-binding' and node.value[2]==binding then return true end
+            if type(node.value)=='string' and node.value=='script-binding '..binding then return true end
+            for _,item in ipairs(node.items or {}) do if has(item,binding) then return true end end
+            return false
+        end
+        if not has(result,'subtitle_memory/menu') then
+            local target
+            for _,item in ipairs(result.items) do
+                if item.items and (item.title==M.text('Субтитры') or item.title=='Subtitles') then target=item;break end
+            end
+            if not target then target={title=M.text('Субтитры'),items={}};result.items[#result.items+1]=target end
+            target.items[#target.items+1]={title=M.text('Запоминание для сериала'),value={'script-binding','subtitle_memory/menu'}}
+        end
+        if not has(result,'network_playback/menu') then
+            table.insert(result.items,math.max(1,#result.items),{title=M.text('Сеть и буфер'),value={'script-binding','network_playback/menu'}})
+        end
+    end
+    return result
 end
 function M.install_messages()
     if M.installed then return end

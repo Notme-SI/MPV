@@ -39,6 +39,9 @@ for name in tracked:
         files[name] = (ROOT / name).read_bytes()
 
 # Public packages must never inherit personal server credentials.
+for name in files:
+    if PurePosixPath(name).name in {'audio-preferences.json', 'subtitle-preferences.json', 'window-state.json'}:
+        raise SystemExit('Personal playback preferences in public package')
 ts = files['portable_config/script-opts/torrserver-loader.conf'].decode('utf-8-sig')
 settings = {}
 for line in ts.splitlines():

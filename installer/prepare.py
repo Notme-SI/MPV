@@ -34,6 +34,7 @@ for line in active:
     if key.strip() in ('username', 'password', 'login', 'torrserver_username', 'torrserver_password') and value.strip():
         raise SystemExit('Nonempty TorrServer credentials in public payload')
 assert not (payload / 'portable_config/audio-preferences.json').exists()
+assert not (payload / 'portable_config/subtitle-preferences.json').exists()
 assert not (payload / 'portable_config/window-state.json').exists()
 
 entries = []

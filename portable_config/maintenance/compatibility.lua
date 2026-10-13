@@ -34,6 +34,7 @@ local function tests()
     dofile(path('maintenance/interface-tests.lua'))(path)
     dofile(path('maintenance/title-tests.lua'))(path)
     dofile(path('maintenance/title-runtime-tests.lua'))(path)
+    dofile(path('maintenance/playback-tests.lua'))(path)
 
     local torrent=dofile(path('extensions/torrserver.lua'))
     local matches=torrent.matcher('http://someone%40example.invalid:secret@EXAMPLE.invalid:80')

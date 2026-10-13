@@ -15,7 +15,7 @@ function Get-TorrServerConfig([string]$Address,[string]$Login,[string]$Password)
     return "scheme=$($uri.Scheme)`n"+"host=$authority`n"+"port=$($uri.Port)`nuse_edl=yes`n"
 }
 if($Library) { return }
-Write-Host 'Настройка TorrServer для MPV'
+Write-Host 'Настройка TorrServer для mpv+'
 Write-Host 'Введите тот же адрес сервера, который используется в Lampa.'
 Write-Host 'Пример локального: http://127.0.0.1:8090'
 Write-Host 'Для сервера без :порта используются 80 (http) или 443 (https).'

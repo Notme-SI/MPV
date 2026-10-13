@@ -2,13 +2,14 @@
 
 [Setup]
 AppId={{55794CC2-4BF5-4D67-BF18-AF9DFA0539D3}
-AppName=MPV
+AppName=mpv+
 AppVersion={#AppVersion}
-AppVerName=MPV {#AppVersion}
+AppVerName=mpv+ {#AppVersion}
 VersionInfoVersion={#AppVersion}.0
-VersionInfoDescription=MPV {#AppVersion} Setup
-DefaultDirName={localappdata}\Programs\MPV
-DefaultGroupName=MPV
+VersionInfoDescription=mpv+ {#AppVersion} Setup
+DefaultDirName={localappdata}\Programs\mpv+
+DefaultGroupName=mpv+
+UsePreviousGroup=no
 DisableProgramGroupPage=no
 DisableDirPage=no
 PrivilegesRequired=lowest
@@ -18,10 +19,10 @@ MinVersion=10.0
 WizardStyle=modern
 SetupIconFile=payload\portable_config\assets\mpv-monochrome.ico
 UninstallDisplayIcon={app}\mpv.exe
-UninstallDisplayName=MPV {#AppVersion}
+UninstallDisplayName=mpv+ {#AppVersion}
 UninstallFilesDir={app}\uninstall
 OutputDir=output
-OutputBaseFilename=MPV-{#AppVersion}-Setup
+OutputBaseFilename=mpv+-{#AppVersion}-Setup
 Compression=lzma2/normal
 SolidCompression=yes
 CloseApplications=yes
@@ -41,10 +42,10 @@ russian.DesktopShortcut=Создать ярлык на рабочем столе
 english.DesktopShortcut=Create a desktop shortcut
 russian.ConfigureTorrServer=Настроить TorrServer
 english.ConfigureTorrServer=Configure TorrServer
-russian.UpdateMPV=Обновить MPV
-english.UpdateMPV=Update MPV
-russian.LaunchMPV=Запустить MPV
-english.LaunchMPV=Launch MPV
+russian.UpdateMPV=Обновить mpv+
+english.UpdateMPV=Update mpv+
+russian.LaunchMPV=Запустить mpv+
+english.LaunchMPV=Launch mpv+
 russian.ReadGuide=Открыть инструкцию
 english.ReadGuide=Open the guide
 russian.SettingsNote=При повторной установке в эту папку личные настройки сохраняются. Автоматических бэкапов нет.
@@ -57,12 +58,13 @@ Name: "desktopicon"; Description: "{cm:DesktopShortcut}"; Flags: unchecked
 #include "files.iss"
 
 [Icons]
-Name: "{group}\MPV"; Filename: "{app}\mpv.exe"; WorkingDir: "{app}"; IconFilename: "{app}\portable_config\assets\mpv-monochrome.ico"
+Name: "{group}\mpv+"; Filename: "{app}\mpv.exe"; WorkingDir: "{app}"; IconFilename: "{app}\portable_config\assets\mpv-monochrome.ico"
 Name: "{group}\{cm:ConfigureTorrServer}"; Filename: "{app}\Настроить TorrServer.cmd"; WorkingDir: "{app}"; IconFilename: "{app}\portable_config\assets\mpv-monochrome.ico"
-Name: "{group}\{cm:UpdateMPV}"; Filename: "{app}\Обновить MPV.cmd"; WorkingDir: "{app}"; IconFilename: "{app}\portable_config\assets\mpv-monochrome.ico"
-Name: "{autodesktop}\MPV"; Filename: "{app}\mpv.exe"; WorkingDir: "{app}"; IconFilename: "{app}\portable_config\assets\mpv-monochrome.ico"; Tasks: desktopicon
+Name: "{group}\{cm:UpdateMPV}"; Filename: "{app}\Обновить mpv+.cmd"; WorkingDir: "{app}"; IconFilename: "{app}\portable_config\assets\mpv-monochrome.ico"
+Name: "{autodesktop}\mpv+"; Filename: "{app}\mpv.exe"; WorkingDir: "{app}"; IconFilename: "{app}\portable_config\assets\mpv-monochrome.ico"; Tasks: desktopicon
 
 [Run]
+Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\portable_config\maintenance\Set-Branding.ps1"" -PlayerRoot ""{app}"" -GroupPath ""{group}"""; Flags: runhidden waituntilterminated
 Filename: "{app}\mpv.exe"; WorkingDir: "{app}"; Description: "{cm:LaunchMPV}"; Flags: nowait postinstall skipifsilent unchecked runasoriginaluser
 Filename: "{app}\ПРОЧТИ МЕНЯ.txt"; Description: "{cm:ReadGuide}"; Flags: shellexec postinstall skipifsilent unchecked runasoriginaluser
 

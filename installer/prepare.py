@@ -5,7 +5,7 @@ import zipfile
 import sys
 
 ROOT = Path(__file__).resolve().parent
-ARCHIVE = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else ROOT.parent / 'dist/MPV-1.0.1.zip'
+ARCHIVE = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else ROOT.parent / 'dist/mpv+-1.0.1.zip'
 EXPECTED = Path(str(ARCHIVE) + '.sha256').read_text(encoding='utf-8-sig').split()[0].lower()
 digest = hashlib.sha256(ARCHIVE.read_bytes()).hexdigest()
 if digest != EXPECTED:
@@ -18,7 +18,7 @@ with zipfile.ZipFile(ARCHIVE) as archive:
         if item.is_dir():
             continue
         parts = Path(item.filename).parts
-        if parts[0] != 'MPV-1.0.1' or '..' in parts:
+        if parts[0] != 'mpv+-1.0.1' or '..' in parts:
             raise SystemExit('Unexpected archive path')
         relative = Path(*parts[1:])
         target = payload / relative

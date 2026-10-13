@@ -6,7 +6,7 @@ $parent=Split-Path -Parent $config
 $player=if(Test-Path -LiteralPath (Join-Path $parent 'mpv.exe')) {$parent} else {[string]$manifest.playerRoot}
 $stamp=Get-Date -Format 'yyyyMMdd-HHmmss'
 $work=Join-Path $env:TEMP ('mpv-export-'+[guid]::NewGuid().ToString('N'))
-$bundle=Join-Path $work 'MPV-Portable'
+$bundle=Join-Path $work 'mpv+-Portable'
 [IO.Directory]::CreateDirectory($bundle)|Out-Null
 foreach($name in @('mpv.exe','mpv.com','ffmpeg.exe','7z','doc','mpv','LICENSES','SOURCES','VERSION.txt','SOURCES.txt','ПРОЧТИ МЕНЯ.txt','Настроить TorrServer.cmd')) {
     $source=Join-Path $player $name
@@ -24,7 +24,7 @@ foreach($file in Get-ChildItem -LiteralPath $config -Recurse -File -Force) {
 }
 $utf8=New-Object Text.UTF8Encoding($true)
 $cmd=@{
-    'Обновить MPV.cmd'='Update-MPV.ps1" -Mode Interactive';
+    'Обновить mpv+.cmd'='Update-MPV.ps1" -Mode Interactive';
     'Сохранить бэкап.cmd'='Export-MPV.ps1"'
 }
 foreach($name in $cmd.Keys) {
@@ -33,7 +33,7 @@ foreach($name in $cmd.Keys) {
 }
 if(!(Test-Path -LiteralPath (Join-Path $bundle 'ПРОЧТИ МЕНЯ.txt'))) { Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'README.txt') -Destination (Join-Path $bundle 'ПРОЧТИ МЕНЯ.txt') }
 [IO.Directory]::CreateDirectory($OutputDirectory)|Out-Null
-$zip=Join-Path $OutputDirectory ("MPV-Portable-$stamp.zip")
+$zip=Join-Path $OutputDirectory ("mpv+-Portable-$stamp.zip")
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 [IO.Compression.ZipFile]::CreateFromDirectory($work,$zip,[IO.Compression.CompressionLevel]::Optimal,$false)
 Write-Host "Сборка сохранена: $zip"

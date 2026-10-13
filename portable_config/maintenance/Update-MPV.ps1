@@ -100,7 +100,7 @@ if($Mode -eq 'Interactive') {
     if($answer -ieq 'N') { Write-Host 'Обновление отменено.'; exit 0 }
 }
 if($Mode -ne 'Verify') {
-    if(Get-Process -Name mpv -ErrorAction SilentlyContinue) { throw 'Закройте mpv и снова запустите «Обновить MPV.cmd».' }
+    if(Get-Process -Name mpv -ErrorAction SilentlyContinue) { throw 'Закройте mpv и снова запустите «Обновить mpv+.cmd».' }
     $writeRoots=@($ConfigRoot)
     if(@($available | Where-Object {$_.entry.scope -eq 'player'}).Count -gt 0) { $writeRoots+=@($PlayerRoot) }
     foreach($root in $writeRoots) {
@@ -108,7 +108,7 @@ if($Mode -ne 'Verify') {
             $probe=Join-Path $root ('.write-'+[guid]::NewGuid().ToString('N'))
             [IO.File]::WriteAllText($probe,'')
             Remove-Item -LiteralPath $probe
-        } catch { throw 'Нет доступа для установки. Запустите «Обновить MPV.cmd» от имени администратора.' }
+        } catch { throw 'Нет доступа для установки. Запустите «Обновить mpv+.cmd» от имени администратора.' }
     }
 }
 $work=Join-Path $env:TEMP ('mpv-update-'+[guid]::NewGuid().ToString('N'))

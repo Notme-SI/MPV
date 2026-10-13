@@ -49,7 +49,7 @@ local function publish(data,title,episode_title,episodes)
     if episodes then display_details.episodes=episodes end
     mp.set_property_native('user-data/readable-title',{text=text,language=language,
         source_title=data.title,title=display_details.title,season=data.season,episodes=display_details.episodes})
-    mp.set_property('title',text)
+    mp.set_property('title',text..' - mpv+')
 end
 local function identity()
     local list=mp.get_property_native('playlist',{})
@@ -146,7 +146,7 @@ end
 local function clear()
     active=false;current=nil;generation=generation+1;cancel()
     mp.set_property_native('user-data/readable-title',{})
-    mp.set_property('title','${media-title}')
+    mp.set_property('title','${?idle-active:mpv+}${!idle-active:${media-title} - mpv+}')
 end
 mp.register_event('start-file',clear)
 mp.register_event('end-file',clear)
@@ -154,3 +154,6 @@ mp.register_event('file-loaded',function() active=true;schedule() end)
 mp.observe_property('user-data/interface-language','string',schedule)
 mp.observe_property('media-title','string',schedule)
 mp.observe_property('user-data/guessit','native',schedule)
+
+-- Brand the empty window as well as windows that already have a media title.
+mp.set_property('title','${?idle-active:mpv+}${!idle-active:${media-title} - mpv+}')

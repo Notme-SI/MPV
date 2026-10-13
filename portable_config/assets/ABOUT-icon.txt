@@ -1,0 +1,10 @@
+Original mpv gradient icon, near black with a white center, 2026-10-13.
+The outer circle has no white rim.
+Source: https://github.com/mpv-player/mpv/blob/c3ac7f3951/etc/mpv-gradient.svg
+The circles, triangle and gradient geometry are preserved. Gradient stop
+colors are neutral gray/white. A tighter viewBox removes excess outer space.
+Editable source: mpv-monochrome.svg. PNG/ICO are rendered from that SVG.
+ICO sizes: 16, 20, 24, 32, 40, 48, 64, 96, 128, 256.
+The ICO is embedded in every mpv.exe icon group and used by window_icon.lua.
+Set-MPVIcon.ps1 reapplies the icon after updating mpv.
+Original component license: ../../LICENSES/mpv-player-mpv-LICENSE.txt.

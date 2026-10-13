@@ -1,0 +1,35 @@
+# Build output and downloaded dependencies
+/dist/
+/installer/payload/
+/installer/output/
+/installer/files.iss
+/installer/payload-manifest.json
+/installer/inno/
+*.exe
+*.com
+*.zip
+*.7z
+/portable_config/scripts/uosc/bin/
+/portable_config/scripts/autochapters/bin/
+/portable_config/scripts/autochapters/anime.json
+/portable_config/fonts/
+/doc/manual.pdf
+/doc/mpbindings.png
+/7z/
+
+# Personal playback state and temporary files
+**/cache/
+**/watch_later/
+**/audio-preferences.json
+**/window-state.json
+**/*backup*/
+*.log
+__pycache__/
+*.pyc
+.env
+.env.*
+cookies.txt
+*.tmp
+
+# Only clean defaults belong in tracked script-opts files.
+# Never copy a personal installation into this checkout.

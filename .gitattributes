@@ -1,0 +1,4 @@
+# Preserve upstream bytes and updater hashes across Windows/Linux checkouts.
+* -text
+*.png binary
+*.ico binary

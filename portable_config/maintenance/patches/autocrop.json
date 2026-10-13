@@ -1,0 +1,10 @@
+[
+  {
+    "before": "require \"mp.options\".read_options(options)",
+    "after": "-- Local controller settings; the detector remains upstream.\noptions.auto_fill = true\noptions.check_interval = 8\nrequire \"mp.options\".read_options(options)"
+  },
+  {
+    "before": "mp.add_key_binding(\"C\", \"toggle_crop\", on_toggle)\nmp.register_event(\"end-file\", cleanup)\nmp.register_event(\"file-loaded\", on_start)",
+    "after": "-- Local controller adapter. Fail closed if upstream removes a required function.\nassert(type(detect_crop)=='function' and type(cleanup)=='function')\nassert(type(remove_cropdetect)=='function' and type(restore_hwdec)=='function')\nassert(type(timers)=='table' and type(cropdetect_label)=='string')\ndofile(mp.command_native({'expand-path','~~/extensions/autocrop.lua'}))({\n    options=options, timers=timers, label=cropdetect_label,\n    start_detection=detect_crop, cleanup=cleanup,\n    remove_cropdetect=remove_cropdetect, restore_hwdec=restore_hwdec,\n})"
+  }
+]

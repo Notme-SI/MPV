@@ -1,0 +1,953 @@
+[
+  {
+    "en": "Aspect ratio",
+    "ru": "Соотношение сторон"
+  },
+  {
+    "en": "Audio",
+    "ru": "Аудио"
+  },
+  {
+    "en": "Audio device",
+    "ru": "Аудиоустройство"
+  },
+  {
+    "en": "Audio devices",
+    "ru": "Аудиоустройства"
+  },
+  {
+    "en": "Audio tracks",
+    "ru": "Аудиодорожки"
+  },
+  {
+    "en": "Autoselect device",
+    "ru": "Автовыбор устройства"
+  },
+  {
+    "en": "Chapter %s",
+    "ru": "Глава %s"
+  },
+  {
+    "en": "Chapters",
+    "ru": "Главы"
+  },
+  {
+    "en": "Default",
+    "ru": "По умолчанию"
+  },
+  {
+    "en": "Default %s",
+    "ru": "По умолчанию %s"
+  },
+  {
+    "en": "Delete file & Next",
+    "ru": "Удалить файл и след."
+  },
+  {
+    "en": "Delete file & Prev",
+    "ru": "Удалить файл и пред."
+  },
+  {
+    "en": "Delete file & Quit",
+    "ru": "Удалить файл и выйти"
+  },
+  {
+    "en": "Disabled",
+    "ru": "Отключено"
+  },
+  {
+    "en": "Drives",
+    "ru": "Диски"
+  },
+  {
+    "en": "Edition",
+    "ru": "Редакция"
+  },
+  {
+    "en": "Edition %s",
+    "ru": "Редакция %s"
+  },
+  {
+    "en": "Editions",
+    "ru": "Редакции"
+  },
+  {
+    "en": "Empty",
+    "ru": "Пусто"
+  },
+  {
+    "en": "First",
+    "ru": "Первый"
+  },
+  {
+    "en": "Fullscreen",
+    "ru": "Полный экран"
+  },
+  {
+    "en": "Last",
+    "ru": "Последний"
+  },
+  {
+    "en": "Load",
+    "ru": "Загрузить"
+  },
+  {
+    "en": "Load audio",
+    "ru": "Загрузить аудио"
+  },
+  {
+    "en": "Load subtitles",
+    "ru": "Загрузить субтитры"
+  },
+  {
+    "en": "Load video",
+    "ru": "Загрузить видео"
+  },
+  {
+    "en": "Loop file",
+    "ru": "Повторять файл"
+  },
+  {
+    "en": "Loop playlist",
+    "ru": "Повторять плейлист"
+  },
+  {
+    "en": "Menu",
+    "ru": "Меню"
+  },
+  {
+    "en": "Navigation",
+    "ru": "Навигация"
+  },
+  {
+    "en": "Next",
+    "ru": "Следующий"
+  },
+  {
+    "en": "No file",
+    "ru": "Нет файла"
+  },
+  {
+    "en": "Open config folder",
+    "ru": "Открыть папку конфигурации"
+  },
+  {
+    "en": "Open file",
+    "ru": "Открыть файл"
+  },
+  {
+    "en": "Playlist",
+    "ru": "Плейлист"
+  },
+  {
+    "en": "Playlist/Files",
+    "ru": "Плейлист / файлы"
+  },
+  {
+    "en": "Prev",
+    "ru": "Предыдущий"
+  },
+  {
+    "en": "Previous",
+    "ru": "Предыдущий"
+  },
+  {
+    "en": "Quit",
+    "ru": "Выйти"
+  },
+  {
+    "en": "Screenshot",
+    "ru": "Скриншот"
+  },
+  {
+    "en": "Show in directory",
+    "ru": "Показать в папке"
+  },
+  {
+    "en": "Shuffle",
+    "ru": "Перемешать"
+  },
+  {
+    "en": "Stream quality",
+    "ru": "Качество потока"
+  },
+  {
+    "en": "Subtitles",
+    "ru": "Субтитры"
+  },
+  {
+    "en": "Track",
+    "ru": "Дорожка"
+  },
+  {
+    "en": "Track %s",
+    "ru": "Дорожка %s"
+  },
+  {
+    "en": "Utils",
+    "ru": "Инструменты"
+  },
+  {
+    "en": "Video",
+    "ru": "Видео"
+  },
+  {
+    "en": "%s channels",
+    "ru": "%s канала/-ов"
+  },
+  {
+    "en": "%s channel",
+    "ru": "%s канал"
+  },
+  {
+    "en": "default",
+    "ru": "по умолчанию"
+  },
+  {
+    "en": "drive",
+    "ru": "диск"
+  },
+  {
+    "en": "external",
+    "ru": "внешняя"
+  },
+  {
+    "en": "forced",
+    "ru": "форсированная"
+  },
+  {
+    "en": "open file",
+    "ru": "открыть файл"
+  },
+  {
+    "en": "parent dir",
+    "ru": "родительская папка"
+  },
+  {
+    "en": "playlist or file",
+    "ru": "плейлист или файл"
+  },
+  {
+    "en": "Pause/Play",
+    "ru": "Пауза/Воспроизвести"
+  },
+  {
+    "en": "Pause / Play",
+    "ru": "Пауза / Воспроизведение"
+  },
+  {
+    "en": "Episodes / Playlist",
+    "ru": "Серии / Плейлист"
+  },
+  {
+    "en": "Select a series",
+    "ru": "Выбрать сериал"
+  },
+  {
+    "en": "Audio track",
+    "ru": "Озвучка"
+  },
+  {
+    "en": "Select track",
+    "ru": "Выбрать дорожку"
+  },
+  {
+    "en": "Remember for this series",
+    "ru": "Запоминание для сериала"
+  },
+  {
+    "en": "Disable",
+    "ru": "Выключить"
+  },
+  {
+    "en": "Load file",
+    "ru": "Загрузить файл"
+  },
+  {
+    "en": "Search online",
+    "ru": "Найти в интернете"
+  },
+  {
+    "en": "Default languages",
+    "ru": "Языки по умолчанию"
+  },
+  {
+    "en": "Skip segments",
+    "ru": "Пропуск заставок"
+  },
+  {
+    "en": "Detected segments",
+    "ru": "Найденные фрагменты"
+  },
+  {
+    "en": "Skip intro",
+    "ru": "Пропустить заставку"
+  },
+  {
+    "en": "Skip recap",
+    "ru": "Пропустить «ранее в сериале»"
+  },
+  {
+    "en": "Skip credits",
+    "ru": "Пропустить титры"
+  },
+  {
+    "en": "AniSkip: enter anime and episode",
+    "ru": "AniSkip: указать аниме и серию"
+  },
+  {
+    "en": "Speed",
+    "ru": "Скорость"
+  },
+  {
+    "en": "Normal",
+    "ru": "Обычная"
+  },
+  {
+    "en": "1.25×",
+    "ru": "1,25×"
+  },
+  {
+    "en": "1.5×",
+    "ru": "1,5×"
+  },
+  {
+    "en": "Picture",
+    "ru": "Изображение"
+  },
+  {
+    "en": "Framing",
+    "ru": "Масштаб"
+  },
+  {
+    "en": "Auto crop",
+    "ru": "Автообрезка"
+  },
+  {
+    "en": "Fit to window",
+    "ru": "Вписать в окно"
+  },
+  {
+    "en": "Fill window (crop edges)",
+    "ru": "Заполнить окно (обрезать края)"
+  },
+  {
+    "en": "Zoom in",
+    "ru": "Увеличить"
+  },
+  {
+    "en": "Zoom out",
+    "ru": "Уменьшить"
+  },
+  {
+    "en": "Reset framing and zoom",
+    "ru": "Исходный кадр и масштаб"
+  },
+  {
+    "en": "Window",
+    "ru": "Окно"
+  },
+  {
+    "en": "Always on top",
+    "ru": "Поверх всех окон"
+  },
+  {
+    "en": "Interface",
+    "ru": "Интерфейс"
+  },
+  {
+    "en": "Seek bar",
+    "ru": "Полоса перемотки"
+  },
+  {
+    "en": "Icons",
+    "ru": "Значки"
+  },
+  {
+    "en": "Close player",
+    "ru": "Закрыть плеер"
+  },
+  {
+    "en": "Interface language",
+    "ru": "Язык интерфейса"
+  },
+  {
+    "en": "Only changes the interface. Audio and subtitles stay unchanged.",
+    "ru": "Меняет только интерфейс. Озвучка и субтитры сохраняются."
+  },
+  {
+    "en": "Could not save the interface language",
+    "ru": "Не удалось сохранить язык интерфейса"
+  },
+  {
+    "en": "Glass",
+    "ru": "Стекло"
+  },
+  {
+    "en": "Light and transparent",
+    "ru": "Светлое и прозрачное"
+  },
+  {
+    "en": "Classic",
+    "ru": "Обычные"
+  },
+  {
+    "en": "Dark appearance",
+    "ru": "Тёмное оформление"
+  },
+  {
+    "en": "Changes buttons, title cards and sliders.",
+    "ru": "Меняет кнопки, блок названия и оформление полос."
+  },
+  {
+    "en": "Handle only",
+    "ru": "Только ползунок"
+  },
+  {
+    "en": "No fill",
+    "ru": "Без заполнения"
+  },
+  {
+    "en": "Fill up to current position",
+    "ru": "Заполнение до текущей позиции"
+  },
+  {
+    "en": "Played portion",
+    "ru": "Просмотренная часть"
+  },
+  {
+    "en": "Buffer indicator",
+    "ru": "Индикация загрузки"
+  },
+  {
+    "en": "Chapter and skip markers",
+    "ru": "Метки глав и пропуска"
+  },
+  {
+    "en": "ON",
+    "ru": "ВКЛ"
+  },
+  {
+    "en": "OFF",
+    "ru": "ВЫКЛ"
+  },
+  {
+    "en": "The buffer indicator is shown when the source reports buffered ranges.",
+    "ru": "Индикация загрузки видна, когда источник сообщает диапазоны буфера."
+  },
+  {
+    "en": "Could not save the appearance",
+    "ru": "Не удалось сохранить оформление"
+  },
+  {
+    "en": "Could not save the seek bar style",
+    "ru": "Не удалось сохранить вид полосы перемотки"
+  },
+  {
+    "en": "Brightness",
+    "ru": "Яркость"
+  },
+  {
+    "en": "Contrast",
+    "ru": "Контрастность"
+  },
+  {
+    "en": "Saturation",
+    "ru": "Насыщенность"
+  },
+  {
+    "en": "Gamma",
+    "ru": "Гамма"
+  },
+  {
+    "en": "Hue",
+    "ru": "Оттенок"
+  },
+  {
+    "en": "Enter value",
+    "ru": "Ввести значение"
+  },
+  {
+    "en": "Decrease",
+    "ru": "Уменьшить значение"
+  },
+  {
+    "en": "Increase",
+    "ru": "Увеличить значение"
+  },
+  {
+    "en": "Reset",
+    "ru": "Сбросить"
+  },
+  {
+    "en": "Reset all settings",
+    "ru": "Сбросить все настройки"
+  },
+  {
+    "en": "Click a setting to enter a number. The - / + buttons adjust it by 1.",
+    "ru": "Нажмите на параметр, чтобы ввести число. Кнопки - / +: шаг 1."
+  },
+  {
+    "en": "Enter a number from -100 to 100.",
+    "ru": "Введите число от -100 до 100."
+  },
+  {
+    "en": "Could not apply the value.",
+    "ru": "Не удалось применить значение."
+  },
+  {
+    "en": "Could not save picture settings",
+    "ru": "Не удалось сохранить настройки изображения"
+  },
+  {
+    "en": "Disable subtitles",
+    "ru": "Выключить субтитры"
+  },
+  {
+    "en": "Speed (Mouse wheel)",
+    "ru": "Скорость (Колесо мыши)"
+  },
+  {
+    "en": "Series audio",
+    "ru": "Озвучка сериала"
+  },
+  {
+    "en": "Remember the selected audio track",
+    "ru": "Запоминать выбранную озвучку"
+  },
+  {
+    "en": "No preference saved yet",
+    "ru": "Выбор ещё не сохранён"
+  },
+  {
+    "en": "Forget the choice for this series",
+    "ru": "Забыть выбор для этого сериала"
+  },
+  {
+    "en": "Saved: %s",
+    "ru": "Сохранено: %s"
+  },
+  {
+    "en": "Russian",
+    "ru": "Русская"
+  },
+  {
+    "en": "English audio",
+    "ru": "Английская"
+  },
+  {
+    "en": "Japanese",
+    "ru": "Японская"
+  },
+  {
+    "en": "File default",
+    "ru": "По умолчанию в файле"
+  },
+  {
+    "en": "Forced Russian only",
+    "ru": "Только форсированные русские"
+  },
+  {
+    "en": "Full Russian",
+    "ru": "Полные русские"
+  },
+  {
+    "en": "Full English",
+    "ru": "Полные английские"
+  },
+  {
+    "en": "Off",
+    "ru": "Выключены"
+  },
+  {
+    "en": "Default audio",
+    "ru": "Озвучка по умолчанию"
+  },
+  {
+    "en": "Default subtitles",
+    "ru": "Субтитры по умолчанию"
+  },
+  {
+    "en": "Could not save language preferences",
+    "ru": "Не удалось сохранить языковые настройки"
+  },
+  {
+    "en": "Automatically remove black bars",
+    "ru": "Автоматически убирать полосы"
+  },
+  {
+    "en": "Detect bars now",
+    "ru": "Определить полосы сейчас"
+  },
+  {
+    "en": "Black bars cropped",
+    "ru": "Полосы обрезаны"
+  },
+  {
+    "en": "No black bars detected",
+    "ru": "Полосы не обнаружены"
+  },
+  {
+    "en": "Auto crop enabled",
+    "ru": "Автообрезка включена"
+  },
+  {
+    "en": "Auto crop disabled",
+    "ru": "Автообрезка выключена"
+  },
+  {
+    "en": "setting saved",
+    "ru": "настройка сохранена"
+  },
+  {
+    "en": "could not save the setting",
+    "ru": "не удалось сохранить настройку"
+  },
+  {
+    "en": "Original framing and zoom until the next video",
+    "ru": "Исходный кадр и масштаб - до следующего видео"
+  },
+  {
+    "en": "Fit the entire image until the next video",
+    "ru": "Вписать изображение целиком - до следующего видео"
+  },
+  {
+    "en": "Fill window: image edges are cropped",
+    "ru": "Заполнить окно: края изображения обрезаются"
+  },
+  {
+    "en": "Intro",
+    "ru": "Заставка"
+  },
+  {
+    "en": "Recap",
+    "ru": "Ранее в сериале"
+  },
+  {
+    "en": "Credits",
+    "ru": "Титры"
+  },
+  {
+    "en": "Preview",
+    "ru": "Анонс"
+  },
+  {
+    "en": "Intro (OP)",
+    "ru": "Заставка (OP)"
+  },
+  {
+    "en": "Credits (ED)",
+    "ru": "Титры (ED)"
+  },
+  {
+    "en": "Intro within the episode",
+    "ru": "Заставка в эпизоде"
+  },
+  {
+    "en": "Credits within the episode",
+    "ru": "Титры в эпизоде"
+  },
+  {
+    "en": "Skip: Intro",
+    "ru": "Пропустить: Заставку"
+  },
+  {
+    "en": "Skip: Recap",
+    "ru": "Пропустить: Ранее в сериале"
+  },
+  {
+    "en": "Skip: Credits",
+    "ru": "Пропустить: Титры"
+  },
+  {
+    "en": "Skip: Preview",
+    "ru": "Пропустить: Анонс"
+  },
+  {
+    "en": "Intros and credits",
+    "ru": "Заставки и титры"
+  },
+  {
+    "en": "Intros and credits (Ctrl+I)",
+    "ru": "Заставки и титры (Ctrl+I)"
+  },
+  {
+    "en": "No skip timestamps found for this episode",
+    "ru": "Для этой серии таймкоды не найдены"
+  },
+  {
+    "en": "No skippable segments for this episode",
+    "ru": "Для этой серии нет фрагментов для пропуска"
+  },
+  {
+    "en": "No skippable segments",
+    "ru": "Нет фрагментов для пропуска"
+  },
+  {
+    "en": "Could not load skip timestamps",
+    "ru": "Не удалось получить таймкоды пропуска"
+  },
+  {
+    "en": "TheIntroDB: no timestamps for this episode yet",
+    "ru": "TheIntroDB: для этой серии пока нет таймкодов"
+  },
+  {
+    "en": "Could not identify the TMDB/IMDb ID for intro search",
+    "ru": "Не определён TMDB/IMDb ID для поиска заставок"
+  },
+  {
+    "en": "Skippable segments found: %d",
+    "ru": "Найдено фрагментов для пропуска: %d"
+  },
+  {
+    "en": "Skipped: %s → end",
+    "ru": "Пропущено: %s → конец",
+    "translate_args": true
+  },
+  {
+    "en": "Skipped: %s → %s",
+    "ru": "Пропущено: %s → %s",
+    "translate_args": true
+  },
+  {
+    "en": "No timestamp: %s",
+    "ru": "Нет таймкода: %s",
+    "translate_args": true
+  },
+  {
+    "en": "Automatic skipping enabled",
+    "ru": "Автоматический пропуск включён"
+  },
+  {
+    "en": "Automatic skipping disabled",
+    "ru": "Автоматический пропуск выключен"
+  },
+  {
+    "en": "Anime title and episode number:",
+    "ru": "Название аниме и номер серии:"
+  },
+  {
+    "en": "AniSkip: GuessIt could not identify the episode title",
+    "ru": "AniSkip: не удалось определить название серии через GuessIt"
+  },
+  {
+    "en": "Searching: %s",
+    "ru": "Поиск: %s"
+  },
+  {
+    "en": "No timestamps found: %s",
+    "ru": "Таймкоды не найдены: %s"
+  },
+  {
+    "en": "end",
+    "ru": "конец"
+  },
+  {
+    "en": "Play/Pause",
+    "ru": "Пауза/Воспроизвести"
+  },
+  {
+    "en": "Drop files or URLs to play here",
+    "ru": "Перетащите сюда файл или ссылку"
+  },
+  {
+    "en": "Reload",
+    "ru": "Перезагрузить"
+  },
+  {
+    "en": "Remove",
+    "ru": "Убрать"
+  },
+  {
+    "en": "Delete",
+    "ru": "Удалить"
+  },
+  {
+    "en": "Use as secondary",
+    "ru": "Использовать как вторые субтитры"
+  },
+  {
+    "en": "Toggle to disable.",
+    "ru": "Нажмите повторно для отключения."
+  },
+  {
+    "en": "Paste path or url to add.",
+    "ru": "Вставьте путь или ссылку для добавления."
+  },
+  {
+    "en": "Paste path or url to open.",
+    "ru": "Вставьте путь или ссылку для открытия."
+  },
+  {
+    "en": "Open in browser",
+    "ru": "Открыть в браузере"
+  },
+  {
+    "en": "Add to playlist",
+    "ru": "Добавить в плейлист"
+  },
+  {
+    "en": "Open in mpv",
+    "ru": "Открыть в mpv"
+  },
+  {
+    "en": "Added to playlist",
+    "ru": "Добавлено в плейлист"
+  },
+  {
+    "en": "Copied to clipboard",
+    "ru": "Скопировано"
+  },
+  {
+    "en": "Copy URL",
+    "ru": "Скопировать ссылку"
+  },
+  {
+    "en": "Copy path",
+    "ru": "Скопировать путь"
+  },
+  {
+    "en": "Move up",
+    "ru": "Переместить вверх"
+  },
+  {
+    "en": "Move down",
+    "ru": "Переместить вниз"
+  },
+  {
+    "en": "%s to delete",
+    "ru": "%s для удаления"
+  },
+  {
+    "en": "%s to go up in tree.",
+    "ru": "%s для перехода выше."
+  },
+  {
+    "en": "%s to search",
+    "ru": "%s для поиска"
+  },
+  {
+    "en": "no results",
+    "ru": "ничего не найдено"
+  },
+  {
+    "en": "type & ctrl+enter to search",
+    "ru": "введите запрос и нажмите ctrl+enter"
+  },
+  {
+    "en": "type to search",
+    "ru": "введите запрос для поиска"
+  },
+  {
+    "en": "foreign parts only",
+    "ru": "только иностранные фрагменты"
+  },
+  {
+    "en": "hearing impaired",
+    "ru": "для слабослышащих"
+  },
+  {
+    "en": "Autoload",
+    "ru": "Автозагрузка"
+  },
+  {
+    "en": "Check for updates",
+    "ru": "Проверить обновления"
+  },
+  {
+    "en": "Open changelog",
+    "ru": "История изменений"
+  },
+  {
+    "en": "Close",
+    "ru": "Закрыть"
+  },
+  {
+    "en": "Search",
+    "ru": "Поиск"
+  },
+  {
+    "en": "Update",
+    "ru": "Обновить"
+  },
+  {
+    "en": "Quality",
+    "ru": "Качество"
+  },
+  {
+    "en": "Requesting TorrServer's API...",
+    "ru": "Запрос к TorrServer..."
+  },
+  {
+    "en": "No response from TorrServer's API!",
+    "ru": "TorrServer не ответил"
+  },
+  {
+    "en": "Invalid BTIH extracted from path!",
+    "ru": "Не удалось определить хеш торрента"
+  },
+  {
+    "en": "Select an entry of torrent:",
+    "ru": "Выберите серию:"
+  },
+  {
+    "en": "Select a torrent:",
+    "ru": "Выберите сериал или фильм:"
+  },
+  {
+    "en": "Brightness: %s",
+    "ru": "Яркость: %s"
+  },
+  {
+    "en": "Brightness (-100 ... 100):",
+    "ru": "Яркость (-100 ... 100):"
+  },
+  {
+    "en": "Contrast: %s",
+    "ru": "Контрастность: %s"
+  },
+  {
+    "en": "Contrast (-100 ... 100):",
+    "ru": "Контрастность (-100 ... 100):"
+  },
+  {
+    "en": "Saturation: %s",
+    "ru": "Насыщенность: %s"
+  },
+  {
+    "en": "Saturation (-100 ... 100):",
+    "ru": "Насыщенность (-100 ... 100):"
+  },
+  {
+    "en": "Gamma: %s",
+    "ru": "Гамма: %s"
+  },
+  {
+    "en": "Gamma (-100 ... 100):",
+    "ru": "Гамма (-100 ... 100):"
+  },
+  {
+    "en": "Hue: %s",
+    "ru": "Оттенок: %s"
+  },
+  {
+    "en": "Hue (-100 ... 100):",
+    "ru": "Оттенок (-100 ... 100):"
+  },
+  {
+    "en": "Toggle to disable. Paste path or url to add.",
+    "ru": "Нажмите повторно для отключения. Вставьте путь или ссылку для добавления."
+  },
+  {
+    "en": "Skip: Intro (Alt+I - intro)",
+    "ru": "Пропустить: Заставка (Alt+I - заставка)"
+  },
+  {
+    "en": "Skip: Recap (Alt+I - intro)",
+    "ru": "Пропустить: Ранее в сериале (Alt+I - заставка)"
+  },
+  {
+    "en": "Skip: Credits (Alt+I - intro)",
+    "ru": "Пропустить: Титры (Alt+I - заставка)"
+  }
+]

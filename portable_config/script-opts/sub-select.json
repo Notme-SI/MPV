@@ -1,0 +1,33 @@
+[
+  {
+    "alang": "*",
+    "slang": [
+      "^ru$",
+      "^rus$",
+      "^ru%-"
+    ],
+    "condition": "mp.get_property_native('user-data/language-defaults/subtitles','forced_ru') == 'forced_ru' and not not (sub.forced or (sub.title or ''):lower():find('forced',1,true) or (sub.title or ''):find('Форс',1,true) or (sub.title or ''):find('форс',1,true) or (sub.title or ''):find('Надписи',1,true) or (sub.title or ''):find('надписи',1,true))"
+  },
+  {
+    "alang": "*",
+    "slang": [
+      "^ru$",
+      "^rus$",
+      "^ru%-"
+    ],
+    "condition": "mp.get_property_native('user-data/language-defaults/subtitles','forced_ru') == 'full_ru' and not (sub.forced or (sub.title or ''):lower():find('forced',1,true) or (sub.title or ''):find('Форс',1,true) or (sub.title or ''):find('форс',1,true) or (sub.title or ''):find('Надписи',1,true) or (sub.title or ''):find('надписи',1,true))"
+  },
+  {
+    "alang": "*",
+    "slang": [
+      "^en$",
+      "^eng$",
+      "^en%-"
+    ],
+    "condition": "mp.get_property_native('user-data/language-defaults/subtitles','forced_ru') == 'full_en' and not (sub.forced or (sub.title or ''):lower():find('forced',1,true) or (sub.title or ''):find('Форс',1,true) or (sub.title or ''):find('форс',1,true) or (sub.title or ''):find('Надписи',1,true) or (sub.title or ''):find('надписи',1,true))"
+  },
+  {
+    "alang": "*",
+    "slang": "no"
+  }
+]

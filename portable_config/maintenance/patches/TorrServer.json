@@ -1,0 +1,6 @@
+[
+  {
+    "before": "mp.add_hook(\"on_load\", 5, function()",
+    "after": "-- Local origin adapter; authentication and playlist generation stay upstream.\nassert(type(is_torrserver)=='function', 'TorrServer origin API changed')\nis_torrserver = dofile(mp.command_native({'expand-path','~~/extensions/torrserver.lua'})).matcher(TORRSERVER)\n\nmp.add_hook(\"on_load\", 5, function()"
+  }
+]

@@ -1,0 +1,9 @@
+This repository contains components under multiple licenses.
+
+New standalone local additions and installer/build scripts are covered by
+LICENSES/LOCAL-ADDITIONS-MIT.txt.
+
+Third-party components and modifications to those components retain their
+original licenses. See LICENSES/ and SOURCES.txt for component attribution.
+The MIT license for local additions does not relicense mpv, FFmpeg, uosc,
+other third-party code, fonts, artwork, or datasets.

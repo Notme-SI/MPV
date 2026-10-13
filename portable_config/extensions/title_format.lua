@@ -54,6 +54,15 @@ function M.parse(raw)
             end
         end
     end
+    -- Anime releases often use "Title S3 - 02" instead of S03E02.
+    -- Keep the season marker out of the title sent to the metadata catalog.
+    if not a or out.episode then
+        local title,short_season=s:match('^(.-)%s+[Ss](%d+)%s*$')
+        if title and trim(title)~='' then
+            out.season,out.kind=tonumber(short_season),'tv'
+            s=title
+        end
+    end
     s=cut_technical(s)
     for p,y in s:gmatch('()(%d%d%d%d)') do
         if tonumber(y)>=1900 and tonumber(y)<=2100 and trim(s:sub(1,p-1))~='' then
@@ -99,6 +108,15 @@ function M.normalize(s)
     for i,c in ipairs(upper) do s=s:gsub(c,lower[i]) end
     return s:gsub('[%s%p]','')
 end
+function M.animation_candidates(results)
+    local matches={}
+    for _,candidate in ipairs(results) do
+        for _,genre in ipairs(candidate.genre_ids or {}) do
+            if genre==16 then matches[#matches+1]=candidate;break end
+        end
+    end
+    return matches
+end
 function M.match_result(results,data,allow_year_offset)
     local hits,nearby={},{}
     local name=M.normalize(data.title)
@@ -106,6 +124,9 @@ function M.match_result(results,data,allow_year_offset)
         local exact=false
         for _,k in ipairs({'name','original_name','title','original_title'}) do
             if r[k] and M.normalize(r[k])==name then exact=true end
+        end
+        for _,alias in ipairs(r.aliases or {}) do
+            if type(alias.title)=='string' and M.normalize(alias.title)==name then exact=true end
         end
         local year=(r.first_air_date or r.release_date or ''):sub(1,4)
         if exact then

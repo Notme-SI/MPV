@@ -1,4 +1,4 @@
--- Shared interface language. Media titles and track preferences are independent.
+-- Shared language for the interface and media titles. Track preferences are independent.
 if package.loaded['mpv-build/ui_locale'] then return package.loaded['mpv-build/ui_locale'] end
 local M={}
 package.loaded['mpv-build/ui_locale']=M

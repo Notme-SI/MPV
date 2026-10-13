@@ -6,7 +6,7 @@ local function menu()
     return {type='interface-language',title=ui.text('Язык интерфейса'),keep_open=true,items={
         {title='Русский',active=current=='ru',value={'script-message-to','interface_language','choose','ru'}},
         {title='English',active=current=='en',value={'script-message-to','interface_language','choose','en'}},
-    },footnote=ui.text('Меняет только интерфейс. Озвучка и субтитры сохраняются.')}
+    },footnote=ui.text('Меняет интерфейс и названия. Озвучка и субтитры сохраняются.')}
 end
 local function publish()
     mp.set_property_native('user-data/interface-language',current)

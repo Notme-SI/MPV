@@ -1,6 +1,7 @@
 local utils=require 'mp.utils'
 local root=mp.command_native({'expand-path','~~/'})
 local fmt=dofile(root..'/extensions/title_format.lua')
+local ui=dofile(root..'/extensions/ui_locale.lua')
 local opts={enabled=true,online=true,tmdb_api_key=''}
 require('mp.options').read_options(opts,'readable_titles')
 local token=opts.tmdb_api_key~='' and opts.tmdb_api_key or dofile(root..'/extensions/tmdb_client.lua')
@@ -11,6 +12,16 @@ local display_details={}
 local requests,cache,pending={},{},{}
 local cache_order={}
 local timer
+local anime_index
+local function is_anime(title)
+    if not anime_index then
+        local file=io.open(root..'/scripts/autochapters/anime.json','rb')
+        if file then
+            anime_index=utils.parse_json(file:read('*a')) or {};file:close()
+        else return false end
+    end
+    return anime_index[fmt.normalize(title)]~=nil
+end
 local function encode(s) return tostring(s):gsub('[^%w%-._~]',function(c) return string.format('%%%02X',c:byte()) end) end
 local function cancel()
     for id in pairs(requests) do mp.abort_async_command(id) end
@@ -36,15 +47,6 @@ local function get(endpoint,callback)
         for _,fn in ipairs(callbacks) do fn(data) end
     end)
     requests[id]=true
-end
-local function audio_language()
-    local track=mp.get_property_native('current-tracks/audio') or {}
-    if track.lang then return fmt.language(track.lang) end
-    local id=mp.get_property_native('aid')
-    for _,t in ipairs(mp.get_property_native('track-list',{})) do
-        if t.type=='audio' and (t.selected or t.id==id) then return fmt.language(t.lang) end
-    end
-    return 'ru'
 end
 local function publish(data,title,episode_title,episodes)
     local text=fmt.label(data,language,title,episode_title)
@@ -73,7 +75,7 @@ end
 local function refresh()
     if not active or not opts.enabled then return end
     local data,raw=identity()
-    local lang=audio_language()
+    local lang=ui.language()
     local signature=raw..'|'..lang..'|'..tostring(data.episode)..'|'..tostring(data.season)
     if signature==current then return end
     generation=generation+1;cancel()
@@ -107,18 +109,40 @@ local function refresh()
     local base_search='search/'..data.kind..'?language='..locale..'&query='..encode(data.title)
     local search=base_search
     if data.year then search=search..(data.kind=='tv' and '&first_air_date_year=' or '&year=')..data.year end
-    get(search,function(result)
-        if gen~=generation or not result then return end
-        local match=fmt.match_result(result.results,data)
-        if match then resolved(match.id)
-        elseif data.year then
-            -- Production and release dates can differ by one year between catalogs.
-            get(base_search,function(broader)
-                if gen~=generation or not broader then return end
-                local nearby=fmt.match_result(broader.results,data,true)
-                if nearby then resolved(nearby.id) end
+    local function match_search(result,allow_year_offset,callback)
+        local results=result.results or {}
+        if #results>1 and is_anime(data.title) then results=fmt.animation_candidates(results) end
+        local match=fmt.match_result(results,data,allow_year_offset)
+        if match or #results==0 or #results>3 then callback(match);return end
+        -- Catalog search understands romanized anime names, but its returned
+        -- localized/original titles may differ. Verify aliases before selecting.
+        local remaining,failed=#results,false
+        local verified={}
+        for i,candidate in ipairs(results) do
+            get(data.kind..'/'..candidate.id..'/alternative_titles',function(aliases)
+                if gen~=generation then return end
+                local copy={};for k,v in pairs(candidate) do copy[k]=v end
+                copy.aliases=aliases and (aliases.results or aliases.titles) or {}
+                if not aliases then failed=true end
+                verified[i]=copy;remaining=remaining-1
+                if remaining==0 then callback(not failed and fmt.match_result(verified,data,allow_year_offset) or nil) end
             end)
         end
+    end
+    get(search,function(result)
+        if gen~=generation or not result then return end
+        match_search(result,false,function(match)
+            if match then resolved(match.id)
+            elseif data.year then
+                -- Production and release dates can differ by one year between catalogs.
+                get(base_search,function(broader)
+                    if gen~=generation or not broader then return end
+                    match_search(broader,true,function(nearby)
+                        if nearby then resolved(nearby.id) end
+                    end)
+                end)
+            end
+        end)
     end)
 end
 local function schedule()
@@ -133,6 +157,6 @@ end
 mp.register_event('start-file',clear)
 mp.register_event('end-file',clear)
 mp.register_event('file-loaded',function() active=true;schedule() end)
-mp.observe_property('current-tracks/audio','native',schedule)
+mp.observe_property('user-data/interface-language','string',schedule)
 mp.observe_property('media-title','string',schedule)
 mp.observe_property('user-data/guessit','native',schedule)

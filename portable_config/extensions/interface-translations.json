@@ -372,8 +372,8 @@
     "ru": "Язык интерфейса"
   },
   {
-    "en": "Only changes the interface. Audio and subtitles stay unchanged.",
-    "ru": "Меняет только интерфейс. Озвучка и субтитры сохраняются."
+    "en": "Changes the interface and titles. Audio and subtitles stay unchanged.",
+    "ru": "Меняет интерфейс и названия. Озвучка и субтитры сохраняются."
   },
   {
     "en": "Could not save the interface language",

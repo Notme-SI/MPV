@@ -3,7 +3,7 @@ return function(path)
     local options=package.loaded['mp.options']
     local utils=require 'mp.utils'
     local props={path='fixture.mkv',['media-title']='Reacher.S01E04.In.a.Tree.2160p.mkv',
-        ['current-tracks/audio']={lang='rus'},['playlist-pos']=0,
+        ['current-tracks/audio']={lang='jpn'},['user-data/interface-language']='ru',aid=3,sid=2,['playlist-pos']=0,
         playlist={{filename='fixture.mkv',title='Reacher.S01E04.In.a.Tree.2160p.mkv'}},['user-data/guessit']={}}
     local events,observers,requests,timers={},{},{},{}
     local function get(k,d) if props[k]==nil then return d end;return props[k] end
@@ -34,7 +34,10 @@ return function(path)
         dofile(path('scripts/readable_titles.lua'))
         events['file-loaded']();tick()
         assert(props['user-data/readable-title'].text:find('серия 4',1,true))
-        props['current-tracks/audio']={lang='eng'};observers['current-tracks/audio']();tick()
+        props['current-tracks/audio']={lang='eng'}
+        if observers['current-tracks/audio'] then observers['current-tracks/audio']() end
+        tick();assert(#requests==1,'Audio selection must not change title language')
+        props['user-data/interface-language']='en';observers['user-data/interface-language']();tick()
         assert(#requests==2)
         respond(1,{results={{id=99,name='Устаревший ответ',original_name='Reacher'}}})
         assert(#requests==2,'stale response started more requests')
@@ -42,7 +45,7 @@ return function(path)
         respond(3,{name='Reacher'})
         respond(4,{episodes={{episode_number=4,name='In a Tree'}}})
         assert(props['user-data/readable-title'].text=='Reacher · Season 1, episode 4: In a Tree')
-        props['current-tracks/audio']={lang='rus'};observers['current-tracks/audio']();tick()
+        props['user-data/interface-language']='ru';observers['user-data/interface-language']();tick()
         respond(5,{results={{id=108978,name='Ричер',original_name='Reacher'}}})
         respond(6,{name='Ричер'})
         respond(7,{episodes={{episode_number=4,name='Укрытие'}}})
@@ -61,6 +64,26 @@ return function(path)
         respond(10,{title='Мститель'})
         assert(props['user-data/readable-title'].text=='Мститель (2025)','Localized movie with release-year offset')
         assert(props['media-title']=='Protector.2025.2160p.mkv','Movie source title preserved')
+        events['end-file']()
+        props['media-title']='Kusuriya no Hitorigoto S3 - 02 [1080p].mkv'
+        props.playlist[1].title=props['media-title']
+        events['file-loaded']();tick()
+        local url=requests[11].args.args[#requests[11].args.args]
+        assert(url:find('language=ru',1,true) and not url:find('S3',1,true),'Interface language and clean anime query')
+        respond(11,{results={{id=220542,name='Монолог фармацевта',original_name='薬屋のひとりごと'}}})
+        assert(requests[12].args.args[#requests[12].args.args]:find('/alternative_titles',1,true))
+        respond(12,{results={{title='Kusuriya no Hitorigoto'}}})
+        respond(13,{name='Монолог фармацевта'})
+        assert(requests[14].args.args[#requests[14].args.args]:find('/season/3?',1,true))
+        respond(14,{episodes={{episode_number=2,name='Тестовая серия'}}})
+        assert(props['user-data/readable-title'].text=='Монолог фармацевта · Сезон 3, серия 2: Тестовая серия')
+        props['user-data/interface-language']='en';observers['user-data/interface-language']();tick()
+        respond(15,{results={{id=220542,name='The Apothecary Diaries',original_name='薬屋のひとりごと'}}})
+        respond(16,{name='The Apothecary Diaries'})
+        respond(17,{episodes={{episode_number=2,name='Test episode'}}})
+        assert(props['user-data/readable-title'].text=='The Apothecary Diaries · Season 3, episode 2: Test episode')
+        assert(props.aid==3 and props.sid==2,'Metadata must not change selected tracks')
+        assert(props['media-title']==props.playlist[1].title,'Anime source title preserved')
         events['end-file']()
     end,debug.traceback)
     mp=real;package.loaded['mp.options']=options

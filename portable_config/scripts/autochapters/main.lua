@@ -97,7 +97,7 @@ local function guess(path, auto)
 
     local parsed=title_format.parse(path)
     parsed=anime_identity.enrich(path,parsed)
-    return parsed.anime and parsed.title or data.title, parsed.episode or data.episode, parsed.season or data.season
+    return parsed.anime and parsed.title or data.title, parsed.episode or data.episode, parsed.season or data.season, parsed.year or data.year
 end
 
 local function time_sort(a, b)
@@ -118,6 +118,7 @@ end
 local file_load
 local database = require('database').new(script_dir, options.db_update_days, function(new_anime, new_relations)
     anime, relations, borked, anime_index = new_anime, new_relations, false, nil
+    anime_identity.invalidate()
     if file_load and not mp.get_property_bool('idle-active', true) then
         mp.add_timeout(0, file_load)
     end
@@ -152,7 +153,7 @@ local function read_json(path)
     end
 end
 
-local function api_lookup(title, episode, duration, auto, season)
+local function api_lookup(title, episode, duration, auto, season, year)
     if borked then return end
 
     if anime == nil or relations == nil then
@@ -175,7 +176,7 @@ local function api_lookup(title, episode, duration, auto, season)
         anime = normalized
     end
     anime_index=anime_index or anime_identity.index(anime)
-    local identity=anime_identity.enrich(title,{title=title,episode=episode,season=season,kind='tv'},anime_index)
+    local identity=anime_identity.enrich(title,{title=title,episode=episode,season=season,year=year,kind='tv'},anime_index)
     local mal_id=identity.mal_id
     if not mal_id or not episode or episode<1 then return end
 
@@ -199,22 +200,11 @@ local function api_lookup(title, episode, duration, auto, season)
         local data = response and response.status==0 and utils.parse_json(response.stdout or '')
         return type(data)=='table' and data.results or {}
     end
-    local best = {}
-    local function collect(items)
-        for _, seg in ipairs(items) do
-            local interval=seg.interval or {}
-            local finish=tonumber(interval.endTime)
-            local start=tonumber(interval.startTime)
-            if start and finish and start>=0 and finish>start and (duration<=0 or finish<=duration+5) then
-                local prior=best[seg.skipType]
-                local delta=math.abs((tonumber(seg.episodeLength) or duration)-duration)
-                if delta<=20 and (not prior or delta<prior.delta) then best[seg.skipType]={delta=delta,segment=seg} end
-            end
-        end
+    local skip_rules=dofile(root..'/extensions/skip_segments.lua')
+    local best=skip_rules.aniskip(lookup(duration),duration)
+    if not next(best) and options.allow_loose_matches then
+        best=skip_rules.aniskip(lookup(0),duration)
     end
-    collect(lookup(duration))
-    if duration>18 then collect(lookup(duration-18)) end
-    if not next(best) and options.allow_loose_matches then collect(lookup(0)) end
     if not next(best) then return end
     local data={results={}}
     for _, kind in ipairs({'op','ed','recap'}) do
@@ -253,12 +243,12 @@ end
 
 local function find_chapters(media_title, auto)
     lookup_key = media_key()
-    local title, episode, season = guess(media_title, auto)
+    local title, episode, season, year = guess(media_title, auto)
     if not title then return end
 
     local duration = mp.get_property_number("duration", 0)
 
-    local found = api_lookup(title, episode, duration, auto, season)
+    local found = api_lookup(title, episode, duration, auto, season, year)
 
     if not found and current_lookup() then
         mp.set_property_native("user-data/autochapters", {})

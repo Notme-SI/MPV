@@ -2,7 +2,7 @@
 $ErrorActionPreference='Stop'
 if(!$PlayerRoot) { $PlayerRoot=Split-Path -Parent (Split-Path -Parent $PSScriptRoot) }
 $PlayerRoot=(Resolve-Path -LiteralPath $PlayerRoot).Path
-$exe=Join-Path $PlayerRoot 'mpv.exe'
+$exe=Join-Path $PlayerRoot 'mpv+.exe'
 $oldUpdate=Join-Path $PlayerRoot 'Обновить MPV.cmd'
 $newUpdate=Join-Path $PlayerRoot 'Обновить mpv+.cmd'
 $programs=[Environment]::GetFolderPath('Programs')
@@ -20,7 +20,8 @@ $shell=New-Object -ComObject WScript.Shell
 $updated=0
 foreach($file in $links) {
     $link=$shell.CreateShortcut($file.FullName)
-    $launcher=[StringComparer]::OrdinalIgnoreCase.Equals($link.TargetPath,$exe)
+    $launcher=[StringComparer]::OrdinalIgnoreCase.Equals($link.TargetPath,$exe) -or [StringComparer]::OrdinalIgnoreCase.Equals($link.TargetPath,(Join-Path $PlayerRoot 'mpv.exe'))
+    if($launcher) { $link.TargetPath=$exe; $link.WorkingDirectory=$PlayerRoot }
     $updater=[StringComparer]::OrdinalIgnoreCase.Equals($link.TargetPath,$oldUpdate)
     $configure=[StringComparer]::OrdinalIgnoreCase.Equals($link.TargetPath,(Join-Path $PlayerRoot 'Настроить TorrServer.cmd'))
     if(!$launcher -and !$updater -and !$configure) { continue }

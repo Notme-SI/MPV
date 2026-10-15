@@ -40,6 +40,16 @@ for name in tracked:
 
 # Retire the previous launcher name when rebuilding from a legacy ZIP.
 files.pop('Обновить MPV.cmd',None)
+files['mpv+.exe'] = files.pop('mpv.exe')
+files.pop('mpv.com',None)
+# Build the narrow compatibility launcher; it only forwards to ../mpv+.exe.
+import os
+compiler = Path(os.environ['WINDIR']) / 'Microsoft.NET/Framework64/v4.0.30319/csc.exe'
+launcher = ROOT / 'dist' / 'lampa-compat' / 'mpv.exe'
+launcher.parent.mkdir(parents=True,exist_ok=True)
+subprocess.run([str(compiler),'/nologo','/target:winexe','/optimize+',f'/out:{launcher}',str(ROOT/'tools/LampaLauncher.cs')],check=True)
+files['compat/mpv.exe'] = launcher.read_bytes()
+files['portable_config/data/anime-catalog.json'] = (ROOT / 'portable_config/data/anime-catalog.json').read_bytes()
 
 # Public packages must never inherit personal server credentials.
 for name in files:

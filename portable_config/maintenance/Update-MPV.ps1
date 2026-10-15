@@ -1,8 +1,10 @@
 ﻿param(
     [ValidateSet('Interactive','Check','Update','Verify')][string]$Mode='Interactive',
-    [switch]$Library
+    [switch]$Library,
+    [string]$ReportPath
 )
 $ErrorActionPreference='Stop'
+if($PSVersionTable.PSVersion.Major -eq 5) { $env:PSModulePath=[Environment]::GetEnvironmentVariable('PSModulePath','Machine') }
 [Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12
 $Utf8=New-Object Text.UTF8Encoding($false)
 function Normalize([string]$Text) { return $Text.Replace("`r`n","`n").TrimEnd("`r","`n")+"`n" }
@@ -39,9 +41,9 @@ $ConfigRoot=Split-Path -Parent $PSScriptRoot
 $manifestPath=Join-Path $PSScriptRoot 'manifest.json'
 $manifest=Get-Content -LiteralPath $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
 $portableRoot=Split-Path -Parent $ConfigRoot
-$PlayerRoot=if(Test-Path -LiteralPath (Join-Path $portableRoot 'mpv.exe')) { $portableRoot } else { [string]$manifest.playerRoot }
-$exe=Join-Path $PlayerRoot 'mpv.com'
-if(!(Test-Path -LiteralPath $exe)) { throw 'Не найден mpv.com. Переносите всю папку сборки.' }
+$PlayerRoot=if(Test-Path -LiteralPath (Join-Path $portableRoot 'mpv+.exe')) { $portableRoot } else { [string]$manifest.playerRoot }
+$exe=Join-Path $PlayerRoot 'mpv+.exe'
+if(!(Test-Path -LiteralPath $exe)) { throw 'Не найден mpv+.exe. Переносите всю папку сборки.' }
 $cache=@{}
 $available=New-Object Collections.ArrayList
 $reports=New-Object Collections.ArrayList
@@ -83,6 +85,10 @@ foreach($entry in $manifest.entries) {
         [void]$reports.Add([pscustomobject]@{Компонент=$entry.name; Состояние=('Не удалось проверить: '+$_.Exception.Message)})
     }
 }
+if($ReportPath) {
+    $rows=@($reports | ForEach-Object { @{name=$_.Компонент;status=$_.Состояние} })
+    Write-Utf8 $ReportPath (@{components=$rows;available=$available.Count;failed=($checkErrors -gt 0)}|ConvertTo-Json -Depth 5)
+}
 $reports | Format-Table -AutoSize -Wrap | Out-Host
 if($available.Count -eq 0) {
     if($checkErrors -gt 0) { Write-Host 'Проверка завершена не полностью. Повторите позже.'; exit 1 }
@@ -100,7 +106,7 @@ if($Mode -eq 'Interactive') {
     if($answer -ieq 'N') { Write-Host 'Обновление отменено.'; exit 0 }
 }
 if($Mode -ne 'Verify') {
-    if(Get-Process -Name mpv -ErrorAction SilentlyContinue) { throw 'Закройте mpv и снова запустите «Обновить mpv+.cmd».' }
+    if(Get-Process -Name mpv,mpv+ -ErrorAction SilentlyContinue) { throw 'Закройте mpv и снова запустите «Обновить mpv+.cmd».' }
     $writeRoots=@($ConfigRoot)
     if(@($available | Where-Object {$_.entry.scope -eq 'player'}).Count -gt 0) { $writeRoots+=@($PlayerRoot) }
     foreach($root in $writeRoots) {
@@ -165,18 +171,19 @@ foreach($update in $available) {
                     }
                 }
             } else {
-                $names=if($entry.kind -eq 'mpv') {@('mpv.exe','mpv.com')} else {@('ffmpeg.exe')}
+                $names=if($entry.kind -eq 'mpv') {@('mpv.exe')} else {@('ffmpeg.exe')}
                 foreach($name in $names) {
                     $found=@(Get-ChildItem -LiteralPath $unpack -Recurse -File -Filter $name)
                     if($found.Count -ne 1) { throw "В архиве не найден $name" }
-                    Copy-Item -LiteralPath $found[0].FullName -Destination (Join-Path $destinationRoot $name) -Force
-                    [void]$files.Add($name)
+                    $destName=if($entry.kind -eq 'mpv') {'mpv+.exe'} else {$name}
+                    Copy-Item -LiteralPath $found[0].FullName -Destination (Join-Path $destinationRoot $destName) -Force
+                    [void]$files.Add($destName)
                 }
             }
         }
         if($entry.kind -eq 'mpv') {
-            $entry.upstreamHash=(Get-FileHash -LiteralPath (Join-Path $destinationRoot 'mpv.exe') -Algorithm SHA256).Hash
-            & (Join-Path $PSScriptRoot 'Set-MPVIcon.ps1') -ExecutablePath (Join-Path $destinationRoot 'mpv.exe') -IconPath (Join-Path $ConfigRoot 'assets/mpv-monochrome.ico')
+            $entry.upstreamHash=(Get-FileHash -LiteralPath (Join-Path $destinationRoot 'mpv+.exe') -Algorithm SHA256).Hash
+            & (Join-Path $PSScriptRoot 'Set-MPVIcon.ps1') -ExecutablePath (Join-Path $destinationRoot 'mpv+.exe') -IconPath (Join-Path $ConfigRoot 'assets/mpv-monochrome.ico')
         }
         $mergeRoot=if($entry.scope -eq 'player') {$preparedPlayer} else {$preparedConfig}
         foreach($rel in $files) {
@@ -191,7 +198,7 @@ foreach($update in $available) {
     }
 }
 if($candidates.Count -eq 0) { Write-Host 'Нет готовых обновлений. Файлы плеера не изменены.'; exit 1 }
-$compatExe=if(Test-Path -LiteralPath (Join-Path $preparedPlayer 'mpv.exe')) {Join-Path $preparedPlayer 'mpv.exe'} else {Join-Path $PlayerRoot 'mpv.exe'}
+$compatExe=if(Test-Path -LiteralPath (Join-Path $preparedPlayer 'mpv+.exe')) {Join-Path $preparedPlayer 'mpv+.exe'} else {Join-Path $PlayerRoot 'mpv+.exe'}
 & (Join-Path $PSScriptRoot 'Test-Extensions.ps1') -Executable $compatExe -ConfigRoot $preparedConfig
 $smoke=Join-Path $work 'smoke.lua'
 Write-Utf8 $smoke "mp.add_timeout(2,function() print('MPV_BUILD_OK'); mp.commandv('quit') end)"
@@ -207,7 +214,7 @@ if($process.ExitCode -ne 0 -or $output -notmatch 'MPV_BUILD_OK' -or $output -mat
     throw "Проверка подготовленной сборки не прошла. Установленные файлы не изменены. Материалы: $work"
 }
 if($Mode -eq 'Verify') { Write-Host 'Проверено: загрузка релиза, контрольная сумма, сохранение доработок и запуск скриптов. Установка не выполнялась.'; exit 0 }
-if(Get-Process -Name mpv -ErrorAction SilentlyContinue) { throw 'Закройте mpv и повторите установку обновлений.' }
+if(Get-Process -Name mpv,mpv+ -ErrorAction SilentlyContinue) { throw 'Закройте mpv и повторите установку обновлений.' }
 $originalManifest=[IO.File]::ReadAllBytes($manifestPath)
 $undo=New-Object Collections.ArrayList
 try {
@@ -243,7 +250,7 @@ try {
 }
 $undo.Clear(); $originalManifest=$null; $original=$null
 if(@($candidates | Where-Object {$_.entry.kind -eq 'mpv'}).Count -gt 0) {
-    try { & (Join-Path $PSScriptRoot 'Refresh-MPVIcon.ps1') -ExecutablePath (Join-Path $PlayerRoot 'mpv.exe') -RebuildCache }
+    try { & (Join-Path $PSScriptRoot 'Refresh-MPVIcon.ps1') -ExecutablePath (Join-Path $PlayerRoot 'mpv+.exe') -RebuildCache }
     catch { Write-Host 'Значок обновлён в файле. Если Windows показывает старый, повторно войдите в систему.' }
 }
 Write-Host 'Обновления установлены.'

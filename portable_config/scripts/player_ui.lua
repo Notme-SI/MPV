@@ -49,7 +49,7 @@ local function menu_data()
             {title = 'Индикация загрузки', hint = cache and 'ВКЛ' or 'ВЫКЛ',
              icon = cache and 'toggle_on' or 'toggle_off',
              value = {'script-binding', 'player_ui/toggle_cache'}},
-            {title='Метки глав и пропуска',hint=prefs.chapter_marks and 'ВКЛ' or 'ВЫКЛ',
+            {title='Метки пропуска',hint=prefs.chapter_marks and 'ВКЛ' or 'ВЫКЛ',
              icon=prefs.chapter_marks and 'toggle_on' or 'toggle_off',
              value={'script-binding','player_ui/toggle_marks'}},
         },

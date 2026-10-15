@@ -3,7 +3,15 @@ local folder=assert(debug.getinfo(1,'S').source:sub(2):match('^(.*)[/\\]'))
 local root=folder..'/..'
 local fmt=dofile(folder..'/title_format.lua')
 local M={}
-local cached
+local cached, catalog
+function M.catalog()
+    if catalog then return catalog end
+    local file=io.open(root..'/data/anime-catalog.json','rb')
+    if not file then return {} end
+    catalog=require('mp.utils').parse_json(file:read('*a'));file:close()
+    return catalog or {}
+end
+function M.invalidate() cached=nil end
 local function copy(value) local result={};for k,v in pairs(value) do result[k]=v end;return result end
 function M.index(database)
     local result={}
@@ -57,6 +65,19 @@ local function identify(data,index)
     else data.mal_id=direct or base_id end
     data.anime=base_id~=nil and base_id~=false or direct~=nil and direct~=false or data.mal_id~=nil
     if data.anime and (data.episode or data.season) then data.kind='tv' end
+    local metadata=data.mal_id and M.catalog()[tostring(data.mal_id)]
+    if metadata then
+        -- An explicit conflicting release year can identify a live-action remake.
+        -- Keep the source identity instead of substituting an anime namesake.
+        if data.year and metadata.year and math.abs(tonumber(data.year)-metadata.year)>1 then
+            data.anime,data.mal_id=false,nil
+        elseif metadata.tmdb_id and (not data.tmdb_id or tostring(data.tmdb_id)==tostring(metadata.tmdb_id)) then
+            data.tmdb_id=metadata.tmdb_id
+            data.tmdb_season=metadata.season
+            data.tmdb_offset=metadata.offset or 0
+            data.kind=metadata.kind
+        end
+    end
     return data
 end
 function M.enrich(raw,data,index)
@@ -64,7 +85,7 @@ function M.enrich(raw,data,index)
     local result=identify(data,index)
     -- Leading episode numbers are stripped only after a database-confirmed anime match.
     local name=fmt.decode(raw or ''):gsub('^.*[/\\]','')
-    local episode,rest=name:match('^(%d%d?%d?)%.%s+(.+)$')
+    local episode,rest=name:match('^(%d%d?%d?%d?)%.%s+(.+)$')
     if episode and tonumber(episode)>0 then
         local candidate=identify(fmt.parse(rest),index)
         if candidate.anime then

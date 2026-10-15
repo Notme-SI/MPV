@@ -420,8 +420,8 @@
     "ru": "Индикация загрузки"
   },
   {
-    "en": "Chapter and skip markers",
-    "ru": "Метки глав и пропуска"
+    "en": "Skip markers",
+    "ru": "Метки пропуска"
   },
   {
     "en": "ON",
@@ -1109,5 +1109,53 @@
   {
     "ru": "Состояние",
     "en": "Status"
+  },
+  {
+    "ru": "Обновления компонентов",
+    "en": "Component updates"
+  },
+  {
+    "ru": "Проверяем обновления…",
+    "en": "Checking for updates…"
+  },
+  {
+    "ru": "Установить и закрыть плеер",
+    "en": "Install and close player"
+  },
+  {
+    "ru": "Проверка не завершена. Повторите позже.",
+    "en": "Check incomplete. Try again later."
+  },
+  {
+    "ru": "При установке плеер закроется и откроется снова. Личные настройки сохраняются.",
+    "en": "The player closes during installation and reopens afterwards. Personal settings are preserved."
+  },
+  {
+    "ru": "Не удалось запустить обновление",
+    "en": "Unable to start update"
+  },
+  {
+    "ru": "Компоненты обновлены",
+    "en": "Components updated"
+  },
+  {
+    "ru": "Обновление не завершено. Откройте журнал.",
+    "en": "Update incomplete. Open the log."
+  },
+  {
+    "ru": "Открыть журнал обновления",
+    "en": "Open update log"
+  },
+  {
+    "ru": "Локально изменён - сохранён",
+    "en": "Locally modified - preserved"
+  },
+  {
+    "ru": "Есть обновление",
+    "en": "Update available"
+  },
+  {
+    "ru": "Актуально",
+    "en": "Up to date"
   }
 ]

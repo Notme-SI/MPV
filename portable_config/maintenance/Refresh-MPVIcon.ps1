@@ -1,6 +1,6 @@
 ﻿param([string]$ExecutablePath,[string]$ShortcutPath,[switch]$RebuildCache)
 $ErrorActionPreference='Stop'
-if(!$ExecutablePath) { $ExecutablePath=Join-Path (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) 'mpv.exe' }
+if(!$ExecutablePath) { $ExecutablePath=Join-Path (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) 'mpv+.exe' }
 $ExecutablePath=(Resolve-Path -LiteralPath $ExecutablePath).Path
 $iconPath=Join-Path (Split-Path -Parent $ExecutablePath) 'portable_config\assets\mpv-monochrome.ico'
 if(!(Test-Path -LiteralPath $iconPath)) { throw 'Icon file not found' }

@@ -1,4 +1,4 @@
-#define AppVersion "1.0.1"
+#define AppVersion "1.0.2"
 
 [Setup]
 AppId={{55794CC2-4BF5-4D67-BF18-AF9DFA0539D3}
@@ -18,7 +18,7 @@ ArchitecturesInstallIn64BitMode=x64compatible
 MinVersion=10.0
 WizardStyle=modern
 SetupIconFile=payload\portable_config\assets\mpv-monochrome.ico
-UninstallDisplayIcon={app}\mpv.exe
+UninstallDisplayIcon={app}\mpv+.exe
 UninstallDisplayName=mpv+ {#AppVersion}
 UninstallFilesDir={app}\uninstall
 OutputDir=output
@@ -26,7 +26,7 @@ OutputBaseFilename=mpv+-{#AppVersion}-Setup
 Compression=lzma2/normal
 SolidCompression=yes
 CloseApplications=yes
-CloseApplicationsFilter=mpv.exe,mpv.com,ffmpeg.exe
+CloseApplicationsFilter=mpv+.exe,mpv.exe,mpv.com,ffmpeg.exe
 RestartApplications=no
 AllowNoIcons=yes
 ShowLanguageDialog=yes
@@ -57,15 +57,19 @@ Name: "desktopicon"; Description: "{cm:DesktopShortcut}"; Flags: unchecked
 [Files]
 #include "files.iss"
 
+[InstallDelete]
+Type: files; Name: "{app}\mpv.exe"
+Type: files; Name: "{app}\mpv.com"
+
 [Icons]
-Name: "{group}\mpv+"; Filename: "{app}\mpv.exe"; WorkingDir: "{app}"; IconFilename: "{app}\portable_config\assets\mpv-monochrome.ico"
+Name: "{group}\mpv+"; Filename: "{app}\mpv+.exe"; WorkingDir: "{app}"; IconFilename: "{app}\portable_config\assets\mpv-monochrome.ico"
 Name: "{group}\{cm:ConfigureTorrServer}"; Filename: "{app}\Настроить TorrServer.cmd"; WorkingDir: "{app}"; IconFilename: "{app}\portable_config\assets\mpv-monochrome.ico"
 Name: "{group}\{cm:UpdateMPV}"; Filename: "{app}\Обновить mpv+.cmd"; WorkingDir: "{app}"; IconFilename: "{app}\portable_config\assets\mpv-monochrome.ico"
-Name: "{autodesktop}\mpv+"; Filename: "{app}\mpv.exe"; WorkingDir: "{app}"; IconFilename: "{app}\portable_config\assets\mpv-monochrome.ico"; Tasks: desktopicon
+Name: "{autodesktop}\mpv+"; Filename: "{app}\mpv+.exe"; WorkingDir: "{app}"; IconFilename: "{app}\portable_config\assets\mpv-monochrome.ico"; Tasks: desktopicon
 
 [Run]
 Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\portable_config\maintenance\Set-Branding.ps1"" -PlayerRoot ""{app}"" -GroupPath ""{group}"""; Flags: runhidden waituntilterminated
-Filename: "{app}\mpv.exe"; WorkingDir: "{app}"; Description: "{cm:LaunchMPV}"; Flags: nowait postinstall skipifsilent unchecked runasoriginaluser
+Filename: "{app}\mpv+.exe"; WorkingDir: "{app}"; Description: "{cm:LaunchMPV}"; Flags: nowait postinstall skipifsilent unchecked runasoriginaluser
 Filename: "{app}\ПРОЧТИ МЕНЯ.txt"; Description: "{cm:ReadGuide}"; Flags: shellexec postinstall skipifsilent unchecked runasoriginaluser
 
 [Code]

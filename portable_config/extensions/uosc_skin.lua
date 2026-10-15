@@ -12,6 +12,10 @@ return function(script_directory)
         if request_render then request_render() end
     end)
 
+    mp.observe_property('user-data/skip-segments','native',function()
+        if request_render then request_render() end
+    end)
+
     -- Format only menu rows. mpv's playlist and media-title remain untouched.
     package.preload['lib/menus']=function()
         local original=assert(loadfile(script_directory..'/lib/menus.lua'))()
@@ -139,10 +143,24 @@ return function(script_directory)
             if options.timeline_style == 'bar' and px > ax then
                 ass:rect(ax,cy-r,px,cy+r,{color='ffffff',opacity=(theme.glass() and 0.96 or 0.76)*visibility,radius=r})
             end
-            for _, chapter in ipairs(state.chapters) do
-                if theme.marks and chapter.time > 0 and chapter.time < state.duration then
-                    local x=t2x(chapter.time)
-                    ass:circle(x,cy,3*s,{color='ffffff',border=1*s,border_color='101010',opacity=visibility})
+            local skip=mp.get_property_native('user-data/skip-segments',{})
+            local media=(mp.get_property('path') or '')..'|'..tostring(mp.get_property_number('playlist-pos',-1))
+            if theme.marks and skip.key==media then
+                local points={}
+                for _,segment in ipairs(skip.segments or {}) do
+                    local a,b=segment.start,segment['end']
+                    if a and b and a>=0 and b>a and b<=state.duration+1 then
+                        ass:rect(t2x(a),cy-r,t2x(math.min(b,state.duration)),cy+r,
+                            {color='FFD79C',opacity=(theme.glass() and 0.95 or 0.8)*visibility,radius=r})
+                        for _,time in ipairs({a,b}) do
+                            local x=t2x(math.min(time,state.duration))
+                            local pixel=math.floor(x+0.5)
+                            if not points[pixel] then
+                                points[pixel]=true
+                                ass:circle(x,cy,3*s,{color='ffffff',border=1*s,border_color='101010',opacity=visibility})
+                            end
+                        end
+                    end
                 end
             end
             for _, name in ipairs({'a','b'}) do

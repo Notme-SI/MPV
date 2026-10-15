@@ -1,10 +1,10 @@
-mpv+ 1.0.1 is installed.
+mpv+ 1.0.2 is installed.
 
 1. Open "Configure TorrServer" in the Start menu if you use Lampa.
-2. In Lampa, select mpv.exe from the installation folder as the external player.
+2. In Lampa Desktop, select compat\mpv.exe from the installation folder as the external player.
 3. Drag local videos into the mpv+ window to play them.
 
-Updates: "Update mpv+" in the Start menu.
+Updates: "Component updates" in the player menu.
 Uninstall: Windows Settings > Apps > mpv+.
 Your personal settings remain in the installation folder after uninstalling.
 

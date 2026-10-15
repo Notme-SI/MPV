@@ -125,6 +125,9 @@ function M.menu(data)
         if not has(result,'network_playback/menu') then
             table.insert(result.items,math.max(1,#result.items),{title=M.text('Сеть и буфер'),value={'script-binding','network_playback/menu'}})
         end
+        if not has(result,'component_updates/menu') then
+            table.insert(result.items,math.max(1,#result.items),{title=M.text('Обновления компонентов'),value={'script-binding','component_updates/menu'}})
+        end
     end
     return result
 end

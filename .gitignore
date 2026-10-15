@@ -12,6 +12,7 @@
 /portable_config/scripts/uosc/bin/
 /portable_config/scripts/autochapters/bin/
 /portable_config/scripts/autochapters/anime.json
+/portable_config/data/anime-catalog.json
 /portable_config/fonts/
 /doc/manual.pdf
 /doc/mpbindings.png

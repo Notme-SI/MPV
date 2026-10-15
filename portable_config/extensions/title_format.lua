@@ -47,7 +47,8 @@ function M.parse(raw)
         if not a then a,b,season=s:find('Сезон%s+(%d+)') end
         if a then out.season,out.kind=tonumber(season),'tv';s=s:sub(1,a-1):gsub('%s*/%s*$','') end
         if not a then
-            a,b,episode=s:find('%s%-%s*(%d%d?%d?)%f[%D]')
+            a,b,episode=s:find('%s%-%s*(%d%d?%d?%d?)%f[%D]')
+            if episode and tonumber(episode)>=1900 and tonumber(episode)<=2100 then a,b,episode=nil,nil,nil end
             if a then
                 out.season,out.episode,out.kind=1,tonumber(episode),'tv'
                 out.episode_title=cut_technical(s:sub(b+1));s=s:sub(1,a-1)

@@ -1,4 +1,4 @@
-﻿mpv+-1.0.1. Исходники и лицензии.
+mpv+-1.0.1. Исходники и лицензии.
 
 Неофициальная сборка. Права на компоненты принадлежат их авторам.
 Лицензии: LICENSES. Lua-исходники: portable_config/scripts, vendor и extensions.
@@ -62,3 +62,11 @@ FFmpeg: https://github.com/zhongfly/mpv-winbuild
 
 Readable titles: TMDB API (https://www.themoviedb.org/).
 This product uses the TMDB API but is not endorsed or certified by TMDB.
+
+Anime title metadata and season mapping (snapshot 2026-10-15):
+https://github.com/manami-project/anime-offline-database (ODbL 1.0; see LICENSES)
+https://github.com/Fribb/anime-lists (identifier/season mappings compiled from Anime-Lists and anime-offline-database)
+https://github.com/Anime-Lists/anime-lists
+https://shikimori.one/api/doc (localized title lookup)
+The derived catalog is distributed as portable_config/data/anime-catalog.json.
+Rebuild using tools/build-anime-catalog.py with downloaded source snapshots.

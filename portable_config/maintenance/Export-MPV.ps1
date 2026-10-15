@@ -3,16 +3,16 @@ $ErrorActionPreference='Stop'
 $config=Split-Path -Parent $PSScriptRoot
 $manifest=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'manifest.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 $parent=Split-Path -Parent $config
-$player=if(Test-Path -LiteralPath (Join-Path $parent 'mpv.exe')) {$parent} else {[string]$manifest.playerRoot}
+$player=if(Test-Path -LiteralPath (Join-Path $parent 'mpv+.exe')) {$parent} else {[string]$manifest.playerRoot}
 $stamp=Get-Date -Format 'yyyyMMdd-HHmmss'
 $work=Join-Path $env:TEMP ('mpv-export-'+[guid]::NewGuid().ToString('N'))
 $bundle=Join-Path $work 'mpv+-Portable'
 [IO.Directory]::CreateDirectory($bundle)|Out-Null
-foreach($name in @('mpv.exe','mpv.com','ffmpeg.exe','7z','doc','mpv','LICENSES','SOURCES','VERSION.txt','SOURCES.txt','ПРОЧТИ МЕНЯ.txt','Настроить TorrServer.cmd')) {
+foreach($name in @('mpv+.exe','compat','ffmpeg.exe','7z','doc','mpv','LICENSES','SOURCES','VERSION.txt','SOURCES.txt','ПРОЧТИ МЕНЯ.txt','Настроить TorrServer.cmd')) {
     $source=Join-Path $player $name
     if(Test-Path -LiteralPath $source) { Copy-Item -LiteralPath $source -Destination $bundle -Recurse }
 }
-if(!(Test-Path -LiteralPath (Join-Path $bundle 'mpv.exe'))) { throw 'mpv.exe не найден.' }
+if(!(Test-Path -LiteralPath (Join-Path $bundle 'mpv+.exe'))) { throw 'mpv+.exe не найден.' }
 $portableConfig=Join-Path $bundle 'portable_config'
 [IO.Directory]::CreateDirectory($portableConfig)|Out-Null
 foreach($file in Get-ChildItem -LiteralPath $config -Recurse -File -Force) {

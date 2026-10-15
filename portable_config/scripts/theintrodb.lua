@@ -374,48 +374,9 @@ build_segments = function(data)
     local native=mp.get_property_native('user-data/file-chapters',{})
     local local_segments=native.key==key and skip_segments.from_chapters(native.chapters,duration,title_format.normalize) or {}
     data=skip_segments.combine(combined,merged,local_segments)
-    tidb.segments = {}
-    for _, kind in ipairs({ "intro", "recap", "credits", "preview" }) do
-        tidb.segments_by_kind[kind] = {}
-        local list = data[kind]
-        if type(list) == "table" then
-            for _, seg in ipairs(list) do
-                if type(seg) == "table" then
-                    local start_ms = seg.start_ms
-                    local end_ms = seg["end_ms"]
-                    -- 0-length => "no segment"
-                    if start_ms == 0 and end_ms == 0 then
-                        -- skip
-                    elseif end_ms == nil or end_ms == 0 then
-                        -- end of media
-                        if start_ms ~= nil and start_ms > 0 then
-                            tidb.segments[#tidb.segments + 1] = {
-                                kind = kind, start = start_ms / 1000, ["end"] = nil,
-                            }
-                        end
-                    else
-                        local start = (start_ms or 0) / 1000
-                        local fin = end_ms / 1000
-                        -- clamp end to duration
-                        if duration > 0 and fin > duration then fin = duration end
-                        tidb.segments[#tidb.segments + 1] = {
-                            kind = kind, start = start, ["end"] = fin,
-                        }
-                    end
-                end
-            end
-        end
-    end
-    table.sort(tidb.segments, function(a, b)
-        local as = a.start or 0
-        local bs = b.start or 0
-        if as == bs then
-            local ae = a["end"] or math.huge
-            local be = b["end"] or math.huge
-            return ae < be
-        end
-        return as < bs
-    end)
+    tidb.segments = skip_segments.flatten(data,duration)
+    for _,kind in ipairs({'intro','recap','credits','preview'}) do tidb.segments_by_kind[kind]={} end
+    mp.set_property_native('user-data/skip-segments',{key=key,segments=tidb.segments})
     for _, seg in ipairs(tidb.segments) do
         tidb.segments_by_kind[seg.kind][#tidb.segments_by_kind[seg.kind] + 1] = seg
     end
@@ -843,6 +804,7 @@ local function on_file_loaded()
     tidb.loaded = false
     tidb.none_msg_shown = false
     tidb.segments = {}
+    mp.set_property_native('user-data/skip-segments',{})
     for _, k in ipairs({ "intro", "recap", "credits", "preview" }) do
         tidb.segments_by_kind[k] = {}
     end
@@ -927,6 +889,7 @@ mp.register_event("end-file", function()
     tidb.file_key = nil
     tidb.media = nil
     tidb.segments = {}
+    mp.set_property_native('user-data/skip-segments',{})
     for _, kind in ipairs({'intro','recap','credits','preview'}) do tidb.segments_by_kind[kind] = {} end
     update_overlay()
 end)

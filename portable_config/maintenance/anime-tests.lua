@@ -26,6 +26,24 @@ return function(path)
     local combined=skips.combine({intro={{start_ms=0,end_ms=95000}},preview={{start_ms=1355000}}},online,native)
     assert(combined.intro==native.intro and combined.credits==native.credits and not combined.preview)
     assert(skips.combine({},online,{}).intro==online.intro,'Online fallback for files without chapters')
+    local short_logo=skips.from_chapters({{time=0,title='Intro'},{time=10,title='Part A'},
+        {time=229,title='Opening'},{time=319,title='Part B'}},1440,fmt.normalize)
+    assert(#short_logo.intro==1 and short_logo.intro[1].start_ms==229000,'Studio logo is not another opening')
+    assert(skips.from_chapters({{time=0,title='OP'},{time=90,title='Part A'}},1440,fmt.normalize).intro[1].start_ms==0,
+        'A genuine opening can begin at zero')
+    local valid=skips.flatten({intro={{end_ms=90000},{start_ms=0},{start_ms=0,end_ms=0},
+        {start_ms=35000,end_ms=150000},{start_ms=35100,end_ms=150100}},
+        credits={{start_ms=1400000,end_ms=1550000}},preview={{start_ms=1420000}}},1440)
+    assert(#valid==2 and valid[1].start==35 and valid[1]['end']==150 and valid[2]['end']==1440,
+        'Reject incomplete or out-of-range times, deduplicate, permit an explicit final preview')
+    assert(not skips.validate('intro',{start_ms=0/0,end_ms=90000},1440),'Reject NaN')
+    local function result(length,start,finish)
+        return {skipType='op',episodeLength=length,interval={startTime=start,endTime=finish}}
+    end
+    assert(not next(skips.aniskip({result(1422,0,95)},1440)),'Different cuts must not use the old 18-second fallback')
+    assert(not next(skips.aniskip({result(nil,0,95)},1440)),'Missing release length is not a match')
+    assert(not next(skips.aniskip({result(1440,0,95),result(1440,35,150)},1440)),'Conflicting equally good community times are ambiguous')
+    assert(skips.aniskip({result(1440,35,150)},1440).op.segment.interval.startTime==35)
 
     -- Exercise the actual clickable prompt in both languages, including a live switch.
     local real=mp

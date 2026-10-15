@@ -1,5 +1,76 @@
 -- Embedded chapter boundaries belong to the actual release and outrank online times.
 local M={}
+local function finite(value)
+    value=tonumber(value)
+    return value and value==value and math.abs(value)<math.huge and value or nil
+end
+-- Unknown starts/ends must never turn into an invented opening at 00:00.
+function M.validate(kind,segment,duration)
+    local start=finite(segment.start_ms)
+    local finish=finite(segment.end_ms)
+    duration=finite(duration) or 0
+    if not start or start<0 then return end
+    start=start/1000
+    if (not finish or finish==0) and (kind=='credits' or kind=='preview') and duration>0 then
+        finish=duration*1000
+    end
+    if not finish then return end
+    finish=finish/1000
+    if duration>0 and finish>duration+1 then return end
+    if duration>0 then finish=math.min(finish,duration) end
+    local length=finish-start
+    if length<=0 or length>(kind=='credits' and 900 or 300) then return end
+    if kind=='credits' and length<10 then return end
+    return {kind=kind,start=start,['end']=finish,source=segment.source or 'online'}
+end
+function M.flatten(data,duration)
+    local result={}
+    for _,kind in ipairs({'intro','recap','credits','preview'}) do
+        for _,segment in ipairs(type(data[kind])=='table' and data[kind] or {}) do
+            if type(segment)=='table' then
+                local valid=M.validate(kind,segment,duration)
+                if valid then result[#result+1]=valid end
+            end
+        end
+    end
+    table.sort(result,function(a,b) return a.start==b.start and a['end']<b['end'] or a.start<b.start end)
+    local out={}
+    for _,segment in ipairs(result) do
+        local duplicate=false
+        for _,prior in ipairs(out) do
+            if segment.kind==prior.kind and math.abs(segment.start-prior.start)<1
+                and math.abs(segment['end']-prior['end'])<1 then duplicate=true;break end
+        end
+        if not duplicate then out[#out+1]=segment end
+    end
+    return out
+end
+function M.aniskip(results,duration)
+    local best={}
+    local kinds={op='intro',ed='credits',recap='recap'}
+    if not duration or duration<=0 then return best end
+    for _,item in ipairs(results or {}) do
+        local interval=item.interval or {}
+        local length=finite(item.episodeLength)
+        local start,finish=finite(interval.startTime),finite(interval.endTime)
+        local kind=kinds[item.skipType]
+        -- A different cut can have the same episode but shifted openings. Do not
+        -- accept the previous 20-second tolerance or an unknown episode length.
+        if kind and length and math.abs(length-duration)<=3 and start and finish
+            and M.validate(kind,{start_ms=start*1000,end_ms=finish*1000},duration) then
+            local delta=math.abs(length-duration)
+            local prior=best[item.skipType]
+            if not prior or delta<prior.delta-0.25 then
+                best[item.skipType]={delta=delta,segment=item}
+            elseif math.abs(delta-prior.delta)<=0.25 and
+                (math.abs(start-prior.segment.interval.startTime)>2 or math.abs(finish-prior.segment.interval.endTime)>2) then
+                prior.ambiguous=true
+            end
+        end
+    end
+    for kind,item in pairs(best) do if item.ambiguous then best[kind]=nil end end
+    return best
+end
 local labels={
     intro={'op','opening','intro','заставка','опенинг'},
     credits={'ed','ending','outro','credits','титры','эндинг'},
@@ -24,8 +95,11 @@ function M.from_chapters(chapters,duration,normalize)
         local next_chapter=chapters[i+1]
         local finish=next_chapter and tonumber(next_chapter.time)
         if not finish and (kind=='credits' or kind=='preview') then finish=duration end
-        local max_length=kind=='credits' and 900 or 300
-        if kind and start and finish and start>=0 and finish>start and finish-start<=max_length and (duration<=0 or finish<=duration+1) then
+        -- "Intro" also labels studio logos and cold opens. Short chapters with
+        -- this generic name are ambiguous; explicit OP/Opening labels remain valid.
+        local generic=normalize(chapter.title or '')=='intro'
+        local ambiguous=kind=='intro' and generic and start and finish and finish-start<30
+        if kind and not ambiguous and start and finish and M.validate(kind,{start_ms=start*1000,end_ms=finish*1000},duration) then
             out[kind]=out[kind] or {}
             out[kind][#out[kind]+1]={start_ms=start*1000,end_ms=finish*1000,source='chapters'}
         end

@@ -27,9 +27,16 @@ local function get(endpoint,callback)
     pending[endpoint]={callback}
     local id,gen
     gen=generation
+    local args={'curl','--silent','--fail','--connect-timeout','3','--max-time','7'}
+    if endpoint:match('^shikimori/animes/%d+$') then
+        args[#args+1]='--user-agent';args[#args+1]='mpv-plus/1.0.2'
+        args[#args+1]='https://shikimori.one/api/'..endpoint:sub(11)
+    else
+        args[#args+1]='--header';args[#args+1]='Authorization: Bearer '..token
+        args[#args+1]='https://api.themoviedb.org/3/'..endpoint
+    end
     id=mp.command_native_async({name='subprocess',capture_stdout=true,capture_stderr=true,
-        args={'curl','--silent','--fail','--connect-timeout','3','--max-time','7',
-            '--header','Authorization: Bearer '..token,'https://api.themoviedb.org/3/'..endpoint}},function(ok,res)
+        args=args},function(ok,res)
         requests[id]=nil
         if gen~=generation then return end
         local callbacks=pending[endpoint] or {};pending[endpoint]=nil
@@ -43,9 +50,11 @@ local function get(endpoint,callback)
     requests[id]=true
 end
 local function publish(data,title,episode_title,episodes)
+    episode_title=episode_title or display_details.episode_title
     local text=fmt.label(data,language,title,episode_title)
     if text=='' then text=mp.get_property('media-title','') end
     if title then display_details.title=title end
+    if episode_title then display_details.episode_title=episode_title end
     if episodes then display_details.episodes=episodes end
     mp.set_property_native('user-data/readable-title',{text=text,language=language,
         source_title=data.title,title=display_details.title,season=data.season,episodes=display_details.episodes})
@@ -79,22 +88,33 @@ local function refresh()
     publish(data)
     if not opts.online or data.title=='' or not token or token=='' then return end
     local locale=lang
+    local function anime_fallback()
+        if not data.mal_id then return end
+        get('shikimori/animes/'..data.mal_id,function(details)
+            if gen~=generation or not details or tostring(details.id)~=tostring(data.mal_id) then return end
+            local title=lang=='ru' and details.russian or (details.english or {})[1]
+            if title and title~='' then publish(data,title) end
+        end)
+    end
     local function resolved(id)
         if gen~=generation or not id then return end
         local endpoint=data.kind..'/'..id
         get(endpoint..'?language='..locale,function(details)
-            if gen~=generation or not details then return end
+            if gen~=generation then return end
+            if not details then anime_fallback();return end
             local title=details.name or details.title
             publish(data,title)
+            if lang=='ru' and title and not title:find('[\208\209]') then anime_fallback() end
             if data.kind=='tv' and data.episode then
-                get(endpoint..'/season/'..(data.season or 1)..'?language='..locale,function(season)
+                get(endpoint..'/season/'..(data.tmdb_season or data.season or 1)..'?language='..locale,function(season)
                     if gen~=generation or not season then return end
                     local episodes,episode_title={},nil
                     for _,episode in ipairs(season.episodes or {}) do
-                        episodes[tostring(episode.episode_number)]=episode.name
-                        if episode.episode_number==data.episode then episode_title=episode.name end
+                        local number=episode.episode_number-(data.tmdb_offset or 0)
+                        if number>0 then episodes[tostring(number)]=episode.name end
+                        if number==data.episode then episode_title=episode.name end
                     end
-                    publish(data,title,episode_title,episodes)
+                    publish(data,display_details.title or title,episode_title,episodes)
                 end)
             end
         end)
@@ -124,7 +144,8 @@ local function refresh()
         end
     end
     get(search,function(result)
-        if gen~=generation or not result then return end
+        if gen~=generation then return end
+        if not result then anime_fallback();return end
         match_search(result,false,function(match)
             if match then resolved(match.id)
             elseif data.year then
@@ -132,10 +153,10 @@ local function refresh()
                 get(base_search,function(broader)
                     if gen~=generation or not broader then return end
                     match_search(broader,true,function(nearby)
-                        if nearby then resolved(nearby.id) end
+                        if nearby then resolved(nearby.id) else anime_fallback() end
                     end)
                 end)
-            end
+            else anime_fallback() end
         end)
     end)
 end

@@ -2,7 +2,7 @@ local ui=dofile(mp.command_native({'expand-path','~~/extensions/ui_locale.lua'})
 ui.install_messages()
 -- Store dubbing preferences per series; never record play positions or watched episodes.
 local utils=require 'mp.utils'
-local store_path=mp.command_native({'expand-path','~~/audio-preferences.json'})
+local store_path=dofile(mp.command_native({'expand-path','~~/'})..'/extensions/user_settings.lua').path('audio-preferences.json')
 local data={enabled=true,series={}}
 local file=io.open(store_path,'rb')
 if file then local parsed=utils.parse_json(file:read('*a'));file:close();if type(parsed)=='table' and type(parsed.series)=='table' then data=parsed end end

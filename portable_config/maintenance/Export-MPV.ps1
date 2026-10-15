@@ -1,40 +1,27 @@
-﻿param([string]$OutputDirectory=(Join-Path $env:USERPROFILE 'Downloads'))
+﻿param([string]$OutputDirectory=(Join-Path $env:USERPROFILE 'Downloads'),[string]$SettingsDirectory,[string]$ReportPath,[string]$PlayerDirectory)
 $ErrorActionPreference='Stop'
 $config=Split-Path -Parent $PSScriptRoot
-$manifest=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'manifest.json') -Raw -Encoding UTF8 | ConvertFrom-Json
-$parent=Split-Path -Parent $config
-$player=if(Test-Path -LiteralPath (Join-Path $parent 'mpv+.exe')) {$parent} else {[string]$manifest.playerRoot}
-$stamp=Get-Date -Format 'yyyyMMdd-HHmmss'
-$work=Join-Path $env:TEMP ('mpv-export-'+[guid]::NewGuid().ToString('N'))
-$bundle=Join-Path $work 'mpv+-Portable'
-[IO.Directory]::CreateDirectory($bundle)|Out-Null
-foreach($name in @('mpv+.exe','compat','ffmpeg.exe','7z','doc','mpv','LICENSES','SOURCES','VERSION.txt','SOURCES.txt','ПРОЧТИ МЕНЯ.txt','Настроить TorrServer.cmd')) {
-    $source=Join-Path $player $name
-    if(Test-Path -LiteralPath $source) { Copy-Item -LiteralPath $source -Destination $bundle -Recurse }
-}
-if(!(Test-Path -LiteralPath (Join-Path $bundle 'mpv+.exe'))) { throw 'mpv+.exe не найден.' }
-$portableConfig=Join-Path $bundle 'portable_config'
-[IO.Directory]::CreateDirectory($portableConfig)|Out-Null
-foreach($file in Get-ChildItem -LiteralPath $config -Recurse -File -Force) {
-    $rel=$file.FullName.Substring($config.Length+1)
-    if($rel -match '(^|\\)(watch_later|watch_history)(\\|$)' -or $rel -match '\.bak$') { continue }
-    $dest=Join-Path $portableConfig $rel
-    [IO.Directory]::CreateDirectory((Split-Path -Parent $dest))|Out-Null
-    Copy-Item -LiteralPath $file.FullName -Destination $dest
-}
-$utf8=New-Object Text.UTF8Encoding($true)
-$cmd=@{
-    'Обновить mpv+.cmd'='Update-MPV.ps1" -Mode Interactive';
-    'Сохранить бэкап.cmd'='Export-MPV.ps1"'
-}
-foreach($name in $cmd.Keys) {
-    $text="@echo off`r`npowershell.exe -NoProfile -ExecutionPolicy Bypass -File `"%~dp0portable_config\maintenance\"+$cmd[$name]+"`r`npause`r`n"
-    [IO.File]::WriteAllText((Join-Path $bundle $name),$text,[Text.Encoding]::ASCII)
-}
-if(!(Test-Path -LiteralPath (Join-Path $bundle 'ПРОЧТИ МЕНЯ.txt'))) { Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'README.txt') -Destination (Join-Path $bundle 'ПРОЧТИ МЕНЯ.txt') }
+$player=if($PlayerDirectory){(Resolve-Path -LiteralPath $PlayerDirectory).Path}else{Split-Path -Parent $config}
+$exe=Join-Path $player 'mpv+.exe'
+if(!(Test-Path -LiteralPath $exe)) {throw 'mpv+.exe is missing.'}
 [IO.Directory]::CreateDirectory($OutputDirectory)|Out-Null
-$zip=Join-Path $OutputDirectory ("mpv+-Portable-$stamp.zip")
+$zip=Join-Path $OutputDirectory ('mpv+-Backup-'+(Get-Date -Format 'yyyyMMdd-HHmmss')+'.zip')
+$files=@{}
+Get-ChildItem -LiteralPath $player -File -Recurse -Force | ForEach-Object {
+    $rel=$_.FullName.Substring($player.Length+1)
+    if($rel -notmatch '(^|\\)(uninstall|watch_later|watch_history)(\\|$)' -and $rel -notmatch '\.(cmd|bat|bak|log)$') {$files[$rel]=$_.FullName}
+}
+if($SettingsDirectory -and (Test-Path -LiteralPath $SettingsDirectory)) {
+    Get-ChildItem -LiteralPath $SettingsDirectory -File -Recurse | ForEach-Object {
+        $rel=$_.FullName.Substring($SettingsDirectory.TrimEnd('\').Length+1)
+        $files['portable_config\'+$rel]=$_.FullName
+    }
+}
+Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
-[IO.Compression.ZipFile]::CreateFromDirectory($work,$zip,[IO.Compression.CompressionLevel]::Optimal,$false)
-Write-Host "Сборка сохранена: $zip"
-Write-Host 'Архив содержит настройки и данные входа TorrServer. Храните его как личную резервную копию.'
+$archive=[IO.Compression.ZipFile]::Open($zip,[IO.Compression.ZipArchiveMode]::Create)
+try {foreach($rel in $files.Keys) {
+    [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archive,$files[$rel],('mpv+-Portable/'+$rel.Replace('\','/')),[IO.Compression.CompressionLevel]::Optimal)|Out-Null
+}} finally {$archive.Dispose()}
+if($ReportPath) {[IO.File]::WriteAllText($ReportPath,(@{path=$zip}|ConvertTo-Json),[Text.UTF8Encoding]::new($false))}
+Write-Output $zip

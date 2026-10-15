@@ -5,18 +5,18 @@ local utils=require 'mp.utils'
 local policy=dofile(root..'/extensions/playback_preferences.lua')
 local ts=dofile(root..'/extensions/torrserver.lua')
 local opts={reconnect=true,buffer='auto'}
-require('mp.options').read_options(opts,'network_playback')
+dofile(mp.command_native({'expand-path','~~/'})..'/extensions/user_settings.lua').options(opts,'network_playback')
 local profiles={auto=false,normal={seconds=60,bytes=256*1024*1024,wait=2},large={seconds=180,bytes=512*1024*1024,wait=3}}
 if profiles[opts.buffer]==nil then opts.buffer='auto' end
 local session,pending,restarting,held,timer
 local diagnostics=false
-local server={scheme='http',host='127.0.0.1',port='8090'}
-require('mp.options').read_options(server,'torrserver-loader')
+local server={scheme='http',host='127.0.0.1',port='8090',use_edl=true}
+dofile(mp.command_native({'expand-path','~~/'})..'/extensions/user_settings.lua').options(server,'torrserver-loader')
 local origin=server.scheme..'://'..server.host..':'..server.port
 local matches_server=ts.matcher(origin)
 local stat,request,request_generation={},nil,0
 local function save()
-    local f=io.open(root..'/script-opts/network_playback.conf','wb')
+    local f=io.open(dofile(mp.command_native({'expand-path','~~/'})..'/extensions/user_settings.lua').path('script-opts/network_playback.conf'),'wb')
     if not f then mp.osd_message('Не удалось сохранить настройки сети',3);return end
     local ok=f:write('reconnect='..(opts.reconnect and 'yes' or 'no')..'\nbuffer='..opts.buffer..'\n');local closed=f:close()
     if not ok or not closed then mp.osd_message('Не удалось сохранить настройки сети',3) end

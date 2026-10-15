@@ -41,9 +41,12 @@ $ConfigRoot=Split-Path -Parent $PSScriptRoot
 $manifestPath=Join-Path $PSScriptRoot 'manifest.json'
 $manifest=Get-Content -LiteralPath $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
 $portableRoot=Split-Path -Parent $ConfigRoot
-$PlayerRoot=if(Test-Path -LiteralPath (Join-Path $portableRoot 'mpv+.exe')) { $portableRoot } else { [string]$manifest.playerRoot }
+$PlayerRoot=if((Test-Path -LiteralPath (Join-Path $portableRoot 'mpv+.exe')) -or (Test-Path -LiteralPath (Join-Path $portableRoot 'mpv.exe'))) { $portableRoot } else { [string]$manifest.playerRoot }
 $exe=Join-Path $PlayerRoot 'mpv+.exe'
-if(!(Test-Path -LiteralPath $exe)) { throw 'Не найден mpv+.exe. Переносите всю папку сборки.' }
+if(!(Test-Path -LiteralPath $exe)) {
+    if(Test-Path -LiteralPath (Join-Path $portableRoot 'mpv.exe')) {$PlayerRoot=$portableRoot;$exe=Join-Path $PlayerRoot 'mpv.exe'}
+    else {throw 'Не найден плеер. Переносите всю папку сборки.'}
+}
 $cache=@{}
 $available=New-Object Collections.ArrayList
 $reports=New-Object Collections.ArrayList
@@ -106,7 +109,7 @@ if($Mode -eq 'Interactive') {
     if($answer -ieq 'N') { Write-Host 'Обновление отменено.'; exit 0 }
 }
 if($Mode -ne 'Verify') {
-    if(Get-Process -Name mpv,mpv+ -ErrorAction SilentlyContinue) { throw 'Закройте mpv и снова запустите «Обновить mpv+.cmd».' }
+    if(Get-Process -Name mpv,mpv+ -ErrorAction SilentlyContinue) { throw 'Закройте плеер и повторите обновление из меню.' }
     $writeRoots=@($ConfigRoot)
     if(@($available | Where-Object {$_.entry.scope -eq 'player'}).Count -gt 0) { $writeRoots+=@($PlayerRoot) }
     foreach($root in $writeRoots) {
@@ -114,7 +117,7 @@ if($Mode -ne 'Verify') {
             $probe=Join-Path $root ('.write-'+[guid]::NewGuid().ToString('N'))
             [IO.File]::WriteAllText($probe,'')
             Remove-Item -LiteralPath $probe
-        } catch { throw 'Нет доступа для установки. Запустите «Обновить mpv+.cmd» от имени администратора.' }
+        } catch { throw 'Нет доступа для установки. Повторите обновление из меню и подтвердите запрос Windows.' }
     }
 }
 $work=Join-Path $env:TEMP ('mpv-update-'+[guid]::NewGuid().ToString('N'))

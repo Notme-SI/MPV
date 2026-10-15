@@ -2,12 +2,12 @@ local ui=dofile(mp.command_native({'expand-path','~~/extensions/ui_locale.lua'})
 ui.install_messages()
 -- Local UI preferences, kept separately from the upstream uosc code.
 local utils = require 'mp.utils'
-local config_path = mp.command_native({'expand-path', '~~/script-opts/uosc.conf'})
+local config_path = dofile(mp.command_native({'expand-path','~~/'})..'/extensions/user_settings.lua').path('script-opts/uosc.conf')
 local style, cache = 'bar', true
 local prefs={icon_style='glass',chapter_marks=true}
-require('mp.options').read_options(prefs,'player_ui')
+dofile(mp.command_native({'expand-path','~~/'})..'/extensions/user_settings.lua').options(prefs,'player_ui')
 if prefs.icon_style~='plain' then prefs.icon_style='glass' end
-local prefs_path=mp.command_native({'expand-path','~~/script-opts/player_ui.conf'})
+local prefs_path=dofile(mp.command_native({'expand-path','~~/'})..'/extensions/user_settings.lua').path('script-opts/player_ui.conf')
 local function save_prefs()
     local f=io.open(prefs_path,'wb')
     if not f then mp.osd_message('Не удалось сохранить оформление',3);return end

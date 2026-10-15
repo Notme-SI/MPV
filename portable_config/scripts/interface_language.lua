@@ -1,6 +1,6 @@
 local utils=require 'mp.utils'
 local ui=dofile(mp.command_native({'expand-path','~~/extensions/ui_locale.lua'}))
-local path=mp.command_native({'expand-path','~~/script-opts/interface.conf'})
+local path=dofile(mp.command_native({'expand-path','~~/'})..'/extensions/user_settings.lua').path('script-opts/interface.conf')
 local current=ui.language()
 local function menu()
     return {type='interface-language',title=ui.text('Язык интерфейса'),keep_open=true,items={

@@ -53,7 +53,7 @@ draw=function()
     -- ASS blends transparent layers; it does not blur or refract the video below.
     panel(string.format('\\1c&H000000&\\1a&HE0&\\blur%.2f',4*scale),
         box.x0,box.y0+2*scale,box.x1,box.y1+2*scale)
-    panel('\\1c&H181818&\\1a&H'..(hover and '98' or 'A8')..'&')
+    panel('\\1c&H181818&\\1a&H'..(hover and '78' or '88')..'&')
     -- A restrained vertical sheen, brighter at the top edge.
     for i=0,11 do
         local alpha=math.floor((hover and 204 or 220)+i*2.4)
@@ -65,7 +65,7 @@ draw=function()
         hover and 'AE' or 'CA',0.75*scale,0.3*scale))
     ass:new_event()
     ass:append(string.format('{\\an5\\pos(%.1f,%.1f)\\fnSegoe UI Semibold\\fs%.1f\\1c&HFFFFFF&\\1a&H00&\\3c&H000000&\\3a&H90&\\4c&H000000&\\4a&H80&\\bord%.2f\\shad%.2f\\blur%.2f}%s',
-        (box.x0+box.x1)/2,(box.y0+box.y1)/2,30*scale,0.65*scale,0.6*scale,0.45*scale,ui.text(labels[cue.kind])))
+        (box.x0+box.x1)/2,(box.y0+box.y1)/2,30*scale,0,0,0,ui.text(labels[cue.kind])))
     overlay.res_x=w;overlay.res_y=h;overlay.data=ass.text;overlay:update()
     mp.set_property_native('user-data/skip-prompt-visible',true)
     mp.set_property_native('user-data/skip-prompt-box',box)

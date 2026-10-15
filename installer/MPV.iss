@@ -1,4 +1,4 @@
-#define AppVersion "1.0.2"
+﻿#define AppVersion "1.0.2"
 
 [Setup]
 AppId={{55794CC2-4BF5-4D67-BF18-AF9DFA0539D3}
@@ -58,19 +58,24 @@ Name: "desktopicon"; Description: "{cm:DesktopShortcut}"; Flags: unchecked
 #include "files.iss"
 
 [InstallDelete]
-Type: files; Name: "{app}\mpv.exe"
+Type: files; Name: "{app}\Обновить mpv+.cmd"
+Type: files; Name: "{app}\Обновить MPV.cmd"
+Type: files; Name: "{app}\Настроить TorrServer.cmd"
+Type: files; Name: "{app}\Сохранить бэкап.cmd"
+Type: files; Name: "{app}\ПРОЧТИ МЕНЯ.txt"
+Type: files; Name: "{app}\PUBLIC-AUDIT.txt"
+Type: files; Name: "{app}\VERSION.txt"
+Type: files; Name: "{app}\SOURCES.txt"
 Type: files; Name: "{app}\mpv.com"
 
 [Icons]
 Name: "{group}\mpv+"; Filename: "{app}\mpv+.exe"; WorkingDir: "{app}"; IconFilename: "{app}\portable_config\assets\mpv-monochrome.ico"
-Name: "{group}\{cm:ConfigureTorrServer}"; Filename: "{app}\Настроить TorrServer.cmd"; WorkingDir: "{app}"; IconFilename: "{app}\portable_config\assets\mpv-monochrome.ico"
-Name: "{group}\{cm:UpdateMPV}"; Filename: "{app}\Обновить mpv+.cmd"; WorkingDir: "{app}"; IconFilename: "{app}\portable_config\assets\mpv-monochrome.ico"
 Name: "{autodesktop}\mpv+"; Filename: "{app}\mpv+.exe"; WorkingDir: "{app}"; IconFilename: "{app}\portable_config\assets\mpv-monochrome.ico"; Tasks: desktopicon
 
 [Run]
 Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\portable_config\maintenance\Set-Branding.ps1"" -PlayerRoot ""{app}"" -GroupPath ""{group}"""; Flags: runhidden waituntilterminated
 Filename: "{app}\mpv+.exe"; WorkingDir: "{app}"; Description: "{cm:LaunchMPV}"; Flags: nowait postinstall skipifsilent unchecked runasoriginaluser
-Filename: "{app}\ПРОЧТИ МЕНЯ.txt"; Description: "{cm:ReadGuide}"; Flags: shellexec postinstall skipifsilent unchecked runasoriginaluser
+Filename: "{app}\README.txt"; Description: "{cm:ReadGuide}"; Flags: shellexec postinstall skipifsilent unchecked runasoriginaluser
 
 [Code]
 procedure InitializeWizard;

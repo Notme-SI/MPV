@@ -1,10 +1,10 @@
-param([int]$WaitProcessId,[string]$ResultPath,[switch]$Elevated)
+﻿param([int]$WaitProcessId,[string]$ResultPath,[switch]$Elevated)
 $ErrorActionPreference='Stop'
 if($PSVersionTable.PSVersion.Major -eq 5) { $env:PSModulePath=[Environment]::GetEnvironmentVariable('PSModulePath','Machine') }
 $playerRoot=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $exe=Join-Path $playerRoot 'mpv+.exe'
 if(!(Test-Path -LiteralPath $exe)) { throw 'mpv+.exe is missing.' }
-if(!$ResultPath) { $ResultPath=Join-Path $env:LOCALAPPDATA 'mpv-plus\update-result.json' }
+if(!$ResultPath) { $ResultPath=Join-Path $env:APPDATA 'mpv-plus\update-result.json' }
 $resultDir=Split-Path -Parent $ResultPath
 [IO.Directory]::CreateDirectory($resultDir)|Out-Null
 $logPath=Join-Path $resultDir 'update.log'

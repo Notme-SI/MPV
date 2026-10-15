@@ -21,7 +21,7 @@ return function(extend)
             opacity={main=(hover and 0.27 or 0.13)*visibility,border=0.27*visibility}})
         -- A dark translucent base keeps white text readable over bright scenes.
         ass:rect(ax+0.7*s,ay+0.7*s,bx-0.7*s,by-0.7*s,{color='101010',radius=math.max(0,radius-s),
-            opacity=0.17*visibility})
+            opacity=0.40*visibility})
         local inset=1.3*s
         ass:rect(ax+inset,ay+inset,bx-inset,by-inset,{color='ffffff',radius=math.max(0,radius-inset),
             border=0.45*s,border_color='ffffff',opacity={main=0,border=0.22*visibility},
@@ -61,12 +61,12 @@ return function(extend)
                 local width=math.ceil(text_width(self.badge,{size=size})+size/3)
                 local height=math.ceil(size)
                 local bx,by=self.bx-1,self.by-1
-                ass:rect(bx-width,by-height,bx,by,{color='ffffff',radius=3*s,border=0.6*s,
+                ass:rect(bx-width,by-height,bx,by,{color='ffffff',radius=3*s,border=0,
                     border_color='222222',opacity=visibility})
                 ass:txt(bx-width/2,by-height/2,5,self.badge,{size=size,color='111111',opacity=visibility})
                 icon_clip=string.format('\\iclip(%d,%d,%d,%d)',math.floor(bx-width-s),math.floor(by-height-s),math.ceil(bx),math.ceil(by))
             end
-            ass:icon(cx,cy,self.font_size*0.88,self.icon,{color=color,opacity=visibility,border=0.45*s,
+            ass:icon(cx,cy,self.font_size*0.88,self.icon,{color=color,opacity=visibility,border=0,
                 border_color=self.active and 'ffffff' or '111111',clip=icon_clip})
             return ass
         end
@@ -105,7 +105,7 @@ return function(extend)
                             radius=state.radius,opacity=visibility*(hover and 1 or config.opacity.controls)})
                     end
                     ass:icon((box.ax+box.bx)/2,(box.ay+box.by)/2,size*0.5,button.icon,
-                        {color=foreground,border_color=bg,border=options.text_border*s,opacity=visibility})
+                        {color=foreground,border_color=bg,border=0,opacity=visibility})
                     x=x+self.size
                 end
             end
@@ -127,7 +127,7 @@ return function(extend)
                 local width=math.min(text_width(text,{size=size})+padding*2,limit-x)
                 local box={ax=x,ay=y,bx=x+width,by=y+height}
                 T.header(ass,box,visibility)
-                ass:txt(x+padding,y+height/2,4,text,{size=size,color='ffffff',border=0.6*s,
+                ass:txt(x+padding,y+height/2,4,text,{size=size,color='ffffff',border=0,
                     border_color='000000',opacity=visibility,wrap=2,
                     clip=string.format('\\clip(%d,%d,%d,%d)',math.floor(x),math.floor(y),math.floor(box.bx-padding/2),math.ceil(box.by))})
                 if toggle then cursor:zone('primary_click',box,function() self:toggle_title() end) end
@@ -141,7 +141,7 @@ return function(extend)
             else y=by end
             local badges={}
             if self.current_chapter then
-                badges[#badges+1]={kind='chapter',text=self.current_chapter.index..': '..ui.chapter_text(self.current_chapter.title)}
+                badges[#badges+1]={kind='chapter',text=ui.chapter_text(self.current_chapter.title)}
             end
             for _,badge in ipairs(T.metadata.badges or {}) do badges[#badges+1]=badge end
             if #badges>0 and state.duration and state.time then
@@ -164,7 +164,7 @@ return function(extend)
                 if x+width>self.bx-margin and x>row_x then x=row_x;y=y+height+3*s end
                 local box={ax=x,ay=y,bx=x+width,by=y+height}
                 T.header(ass,box,visibility)
-                ass:txt(x+6*s,y+height/2,4,text,{size=size,color='ffffff',border=0.45*s,
+                ass:txt(x+6*s,y+height/2,4,text,{size=size,color='ffffff',border=0,
                     border_color='000000',opacity=visibility,wrap=2,
                     clip=string.format('\\clip(%d,%d,%d,%d)',math.floor(x),math.floor(y),math.floor(box.bx-3*s),math.ceil(box.by))})
                 if badge.kind=='chapter' then

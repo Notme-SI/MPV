@@ -6,7 +6,12 @@ local cleanup, remove_cropdetect, restore_hwdec = core.cleanup, core.remove_crop
 local utils = require 'mp.utils'
 local ui=dofile(mp.command_native({'expand-path','~~/extensions/ui_locale.lua'}))
 ui.install_messages()
-local config_path = mp.command_native({'expand-path','~~/script-opts/autocrop.conf'})
+local config_path = dofile(mp.command_native({'expand-path','~~/'})..'/extensions/user_settings.lua').path('script-opts/autocrop.conf')
+local settings=dofile(mp.command_native({'expand-path','~~/'})..'/extensions/user_settings.lua')
+if settings.directory()~=mp.command_native({'expand-path','~~/'}) then
+    local f=io.open(config_path,'rb')
+    if f then local saved=f:read('*a'):match('auto%s*=%s*(%w+)');f:close();if saved then options.auto=saved~='no' end end
+end
 local enabled, manual_scan, candidate_crop = false, false, nil
 local detect_crop
 -- Count decoded playback time, not wall time: pause/cache/seek cannot consume

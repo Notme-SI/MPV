@@ -2,7 +2,7 @@ local utils=require 'mp.utils'
 local root=mp.command_native({'expand-path','~~/'})
 local ui=dofile(root..'/extensions/ui_locale.lua')
 local busy,report=false,nil
-local result_path=(os.getenv('LOCALAPPDATA') or os.getenv('TEMP'))..'/mpv-plus/update-result.json'
+local result_path=(os.getenv('APPDATA') or os.getenv('TEMP'))..'/mpv-plus/update-result.json'
 local function read(path)
     local f=io.open(path,'rb');if not f then return nil end
     local data=utils.parse_json(f:read('*a'));f:close();return data
@@ -21,7 +21,7 @@ local function menu()
         if (report.available or 0)>0 and not busy then
             items[#items+1]=item('Установить и закрыть плеер','install')
         end
-        if report.failed then items[#items+1]={title=ui.text('Проверка не завершена. Повторите позже.'),selectable=false} end
+        if report.failed then items[#items+1]={title=ui.text('Проверка не завершена. Повторите позже.'),hint=report.error,selectable=false} end
     end
     return {type='component-updates',title=ui.text('Обновления компонентов'),keep_open=true,items=items,
         footnote=ui.text('При установке плеер закроется и откроется снова. Личные настройки сохраняются.')}
@@ -37,7 +37,12 @@ local function check()
         args={'powershell.exe','-NoProfile','-ExecutionPolicy','Bypass','-File',root..'/maintenance/Update-MPV.ps1',
             '-Mode','Check','-ReportPath',path}},function(ok,result)
         busy=false;report=read(path) or {failed=true};os.remove(path)
-        if not ok or not result or result.status~=0 then report.failed=true end
+        if not ok or not result or result.status~=0 then
+            report.failed=true
+            local log=result_path:gsub('update%-result.json$','update.log')
+            dofile(root..'/extensions/user_settings.lua').path('update-state')
+            local f=io.open(log,'wb');if f then f:write(result and (result.stderr or '')..(result.stdout or '') or 'Could not start updater');f:close() end
+        end
         show(true)
     end)
 end

@@ -18,7 +18,7 @@ python tools/build-anime-catalog.py --database anime-offline-database.json --map
 python tools/build-package.py --base "C:\Downloads\mpv+-1.0.1.zip"
 ```
 
-Результат: `dist/mpv+-1.0.2.zip` и файл SHA-256. Исходный ZIP не изменяется. Новые исходники сначала добавьте в Git, иначе они не попадут в пакет.
+Результат: `dist/mpv+-1.0.2.zip` и файл SHA-256. Исходный ZIP не изменяется. Новые файлы расширений и обслуживания включаются из соответствующих каталогов.
 
 ## Установщик
 
@@ -43,6 +43,6 @@ powershell -NoProfile -ExecutionPolicy Bypass -File portable_config/maintenance/
 
 ## Публикация
 
-В Releases размещайте ZIP и установщик. Контрольные суммы храните в releases/1.0.2/SHA256SUMS.txt. Для новой версии обновите `VERSION`, `installer/MPV.iss`, `VERSION.txt` и описания выпуска. `AppId` установщика должен оставаться прежним.
+В Releases размещайте ZIP и установщик. Контрольные суммы храните в releases/1.0.2/SHA256SUMS.txt. Для новой версии обновите `VERSION`, `installer/MPV.iss`, `README.txt` и описания выпуска. `AppId` установщика должен оставаться прежним.
 
 Не копируйте в репозиторий личную установку: в ней могут находиться пароль TorrServer, токены, история и кэш. В `script-opts` хранятся только чистые настройки по умолчанию.

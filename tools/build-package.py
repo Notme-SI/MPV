@@ -32,7 +32,7 @@ with zipfile.ZipFile(base) as archive:
         files[PurePosixPath(*path.parts[1:]).as_posix()] = archive.read(item)
 
 for name in tracked:
-    if not name:
+    if not name or not (ROOT/name).is_file():
         continue
     path = PurePosixPath(name)
     if path.parts[0] in folders or (len(path.parts) == 1 and path.suffix in {'.cmd', '.txt'}):
@@ -49,8 +49,18 @@ launcher = ROOT / 'dist' / 'lampa-compat' / 'mpv.exe'
 launcher.parent.mkdir(parents=True,exist_ok=True)
 subprocess.run([str(compiler),'/nologo','/target:winexe','/optimize+',f'/out:{launcher}',str(ROOT/'tools/LampaLauncher.cs')],check=True)
 files['compat/mpv.exe'] = launcher.read_bytes()
+files['mpv.exe'] = launcher.read_bytes()
 files['portable_config/data/anime-catalog.json'] = (ROOT / 'portable_config/data/anime-catalog.json').read_bytes()
 
+# Runtime files added after the initial publication are packaged as well.
+for folder in ('portable_config/extensions','portable_config/scripts','portable_config/maintenance'):
+    for source in (ROOT/folder).rglob('*'):
+        if source.is_file() and '__pycache__' not in source.parts:
+            files[source.relative_to(ROOT).as_posix()]=source.read_bytes()
+files['README.txt']=(ROOT/'README.txt').read_bytes()
+files['LICENSES/SOURCES.txt']=(ROOT/'SOURCES.txt').read_bytes()
+for name in list(files):
+    if (name.endswith(('.cmd','.bat')) or name in {'ПРОЧТИ МЕНЯ.txt','PUBLIC-AUDIT.txt','SOURCES.txt','VERSION.txt'}): files.pop(name)
 # Public packages must never inherit personal server credentials.
 for name in files:
     if PurePosixPath(name).name in {'audio-preferences.json', 'subtitle-preferences.json', 'window-state.json'}:

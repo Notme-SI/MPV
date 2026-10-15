@@ -9,7 +9,10 @@ local function read(path)
     if not f then return '' end
     local value=f:read('*a');f:close();return value
 end
-local saved=read('script-opts/interface.conf'):match('language%s*=%s*(%a+)') or 'ru'
+local settings=dofile(mp.command_native({'expand-path','~~/'})..'/extensions/user_settings.lua')
+local language_file=io.open(settings.path('script-opts/interface.conf'),'rb')
+local saved='ru'
+if language_file then saved=language_file:read('*a'):match('language%s*=%s*(%a+)') or saved;language_file:close() end
 local entries=assert(utils.parse_json(read('extensions/interface-translations.json')))
 local exact,formats={},{}
 local function escape(s) return (s:gsub('([%^%$%(%)%%%.%[%]%*%+%-%?])','%%%1')) end
@@ -124,6 +127,9 @@ function M.menu(data)
         end
         if not has(result,'network_playback/menu') then
             table.insert(result.items,math.max(1,#result.items),{title=M.text('Сеть и буфер'),value={'script-binding','network_playback/menu'}})
+        end
+        if not has(result,'player_maintenance/menu') then
+            table.insert(result.items,math.max(1,#result.items),{title=M.language()=='en' and 'Maintenance' or 'Обслуживание',value={'script-binding','player_maintenance/menu'}})
         end
         if not has(result,'component_updates/menu') then
             table.insert(result.items,math.max(1,#result.items),{title=M.text('Обновления компонентов'),value={'script-binding','component_updates/menu'}})

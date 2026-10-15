@@ -19,7 +19,8 @@ internal static class LampaLauncher {
     }
     [STAThread]
     public static int Main(string[] args) {
-        string root = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar)).FullName;
+        string root = AppDomain.CurrentDomain.BaseDirectory;
+        if (!File.Exists(Path.Combine(root, "mpv+.exe"))) root = Directory.GetParent(root.TrimEnd(Path.DirectorySeparatorChar)).FullName;
         var command = new StringBuilder();
         foreach (string arg in args) { if (command.Length > 0) command.Append(' '); command.Append(Quote(arg)); }
         var start = new ProcessStartInfo(Path.Combine(root, "mpv+.exe"), command.ToString());

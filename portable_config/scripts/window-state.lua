@@ -1,6 +1,6 @@
 -- Remember one window size for all videos; never store media names or positions.
 local utils = require 'mp.utils'
-local path = mp.command_native({'expand-path', '~~/window-state.json'})
+local path = dofile(mp.command_native({'expand-path','~~/'})..'/extensions/user_settings.lua').path('window-state.json')
 local saved, last_written = {}, nil
 local file = io.open(path, 'rb')
 if file then

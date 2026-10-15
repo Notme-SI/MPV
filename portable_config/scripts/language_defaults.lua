@@ -3,8 +3,8 @@ ui.install_messages()
 -- Persistent language defaults; current-file track menus remain available in uosc.
 local utils = require 'mp.utils'
 local options = {audio='ru', subtitles='forced_ru'}
-require('mp.options').read_options(options, 'language_defaults')
-local function path(name) return mp.command_native({'expand-path','~~/' .. name}) end
+dofile(mp.command_native({'expand-path','~~/'})..'/extensions/user_settings.lua').options(options,'language_defaults')
+local function path(name) return dofile(mp.command_native({'expand-path','~~/'})..'/extensions/user_settings.lua').path(name) end
 local audio = {
     {'ru','Русская','ru,rus,en,eng'}, {'en','Английская','en,eng,ru,rus'},
     {'ja','Японская','ja,jpn,en,eng,ru,rus'}, {'default','По умолчанию в файле',''},
@@ -94,4 +94,5 @@ end)
 mp.add_key_binding(nil,'menu',function()
     mp.commandv('script-message-to','uosc','open-menu',utils.format_json(menu()))
 end)
+for _,entry in ipairs(audio) do if entry[1]==options.audio then mp.set_property('alang',entry[3]);break end end
 publish()

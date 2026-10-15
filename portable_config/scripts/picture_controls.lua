@@ -6,8 +6,8 @@ local input=require 'mp.input'
 local labels={brightness='Яркость',contrast='Контрастность',saturation='Насыщенность',gamma='Гамма',hue='Оттенок'}
 local order={'brightness','contrast','saturation','gamma','hue'}
 local values={brightness=0,contrast=0,saturation=0,gamma=0,hue=0}
-require('mp.options').read_options(values,'picture_controls')
-local path=mp.command_native({'expand-path','~~/script-opts/picture_controls.conf'})
+dofile(mp.command_native({'expand-path','~~/'})..'/extensions/user_settings.lua').options(values,'picture_controls')
+local path=dofile(mp.command_native({'expand-path','~~/'})..'/extensions/user_settings.lua').path('script-opts/picture_controls.conf')
 for _,key in ipairs(order) do
     values[key]=math.max(-100,math.min(100,tonumber(values[key]) or 0))
     mp.set_property_number(key,values[key])

@@ -154,12 +154,16 @@ return function(script_directory)
                             {color='FFD79C',opacity=(theme.glass() and 0.95 or 0.8)*visibility,radius=r})
                         for _,time in ipairs({a,b}) do
                             local x=t2x(math.min(time,state.duration))
-                            local pixel=math.floor(x+0.5)
-                            if not points[pixel] then
-                                points[pixel]=true
-                                ass:circle(x,cy,3*s,{color='ffffff',border=1*s,border_color='101010',opacity=visibility})
-                            end
+                            points[#points+1]=x
                         end
+                    end
+                end
+                table.sort(points)
+                local last
+                for _,x in ipairs(points) do
+                    if not last or x-last>=6*s then
+                        ass:circle(x,cy,2.2*s,{color='ffffff',border=0.6*s,border_color='303030',opacity=visibility})
+                        last=x
                     end
                 end
             end
@@ -170,7 +174,7 @@ return function(script_directory)
                 end
             end
             ass:rect(px-2.5*s,cy-9*s,px+2.5*s,cy+9*s,{color='ffffff',radius=2.5*s,opacity=visibility})
-            local opts={size=self.font_size,color='ffffff',border=0.7*s,border_color='000000',opacity=visibility}
+            local opts={size=self.font_size,color='ffffff',border=0,border_color='000000',opacity=visibility}
             ass:txt(self.ax+10*s,cy,4,state.time_human or '',opts)
             ass:txt(self.bx-10*s,cy,6,state.destination_time_human or '',opts)
 
@@ -227,7 +231,7 @@ return function(script_directory)
             if theme.glass() then theme.panel(ass,box,opacity,height/2)
             else ass:rect(box.ax,box.ay,box.bx,box.by,{color='111111',radius=height/2,border=0.6*s,
                 border_color='ffffff',opacity={main=0.44*opacity,border=0.12*opacity}}) end
-            ass:txt(cx,cy-4*s,5,text,{size=size,color='ffffff',border=0.5*s,border_color='000000',opacity=opacity})
+            ass:txt(cx,cy-4*s,5,text,{size=size,color='ffffff',border=0,border_color='000000',opacity=opacity})
             for i=-3,3 do
                 local x=cx+i*7*s
                 local height=(i==0 and 5 or math.abs(i)==2 and 4 or 2.5)*s
@@ -263,7 +267,7 @@ return function(script_directory)
                 if y<slider.by then ass:rect(x-r,y,x+r,slider.by,{color='ffffff',radius=r,opacity=(theme.glass() and 0.96 or 0.76)*visibility}) end
                 ass:rect(x-7*s,y-2*s,x+7*s,y+2*s,{color='ffffff',radius=2*s,opacity=visibility})
                 ass:txt(x,slider.ay-8*s,2,tostring(round(state.volume)),{size=16*s,color='ffffff',
-                    border=0.7*s,border_color='000000',opacity=visibility})
+                    border=0,border_color='000000',opacity=visibility})
                 return ass
             end
         end

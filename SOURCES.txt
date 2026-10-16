@@ -5,7 +5,8 @@ mpv+. Исходники и лицензии.
 portable_config/maintenance/manifest.json.
 
 Неофициальная сборка. Права на компоненты принадлежат их авторам.
-Лицензии: LICENSES. Lua-исходники: portable_config/scripts, vendor и extensions.
+Лицензии: LICENSES. Lua-исходники: portable_config/scripts,
+portable_config/vendor и portable_config/extensions.
 Оригиналы изменённых модулей: SOURCES/upstream.
 Расширения сборки: portable_config/extensions и отдельные scripts.
 Адаптеры и оставшиеся патчи: portable_config/maintenance/patches.

@@ -1,4 +1,6 @@
-mpv+ 1.0.3 — Windows 10/11 x64
+mpv+ — Windows 10/11 x64
+
+Последний выпуск и его версия: https://github.com/Notme-SI/mpv-plus/releases/latest
 
 Запуск: mpv+.exe. Для внешнего плеера Lampa Desktop выберите mpv.exe
 из этой же папки: это совместимый запускатель mpv+.
@@ -21,5 +23,5 @@ mpv+ 1.0.3 — Windows 10/11 x64
 Пропуск заставок и титров доступен, когда в файле или базе есть подходящие таймкоды.
 Версии отдельных компонентов и контрольные суммы: portable_config/maintenance/manifest.json.
 Сведения об исходниках: LICENSES/SOURCES.txt. Лицензии: LICENSES и SOURCES.
+Подробное руководство: https://github.com/Notme-SI/mpv-plus/blob/main/docs/USAGE.md
 https://github.com/Notme-SI/mpv-plus
-

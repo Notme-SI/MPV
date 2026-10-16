@@ -47,7 +47,11 @@ function M.install()
     local ui=dofile(mp.command_native({'expand-path','~~/extensions/ui_locale.lua'}))
     ui.install_messages()
     local show=mp.osd_message
-    mp.osd_message=function(text,seconds) return show(ui.language()=='en' and text or M.translate(text),seconds) end
+    local panel=dofile(mp.command_native({'expand-path','~~/extensions/torrent_panel.lua'})).new(ui)
+    mp.osd_message=function(text,seconds)
+        if panel.show(text) then return end
+        return show(ui.language()=='en' and text or M.translate(text),seconds)
+    end
     local input=require 'mp.input'
     local select=input.select
     input.select=function(args)

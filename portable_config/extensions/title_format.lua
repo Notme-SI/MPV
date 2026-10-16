@@ -26,10 +26,17 @@ function M.parse(raw)
         s=s:match('([^/]+)$') or s
         if s=='stream' then s='' end
     elseif s:find('\\',1,true) then s=s:match('([^\\]+)$') or s end
+    -- A failed server lookup can leave a query after the filename in playlist titles.
+    s=s:gsub('(%.[mM][kK][vV])[?#].*$','%1'):gsub('(%.[mM][pP]4)[?#].*$','%1')
     s=s:gsub('%.[mM][kK][vV]$',''):gsub('%.[mM][pP]4$',''):gsub('%.[aA][vV][iI]$','')
         :gsub('%.[mM]4[vV]$',''):gsub('%.[tT][sS]$',''):gsub('%.[mM][oO][vV]$','')
     s=s:gsub('%[[^%]]*%]',' '):gsub('[._]',' '):gsub('%s+',' ')
     local out={kind='movie'}
+    local parenthesized_season
+    s=s:gsub('%([Ss](%d+)%)',function(n)
+        parenthesized_season=tonumber(n)
+        return ' '
+    end):gsub('%s+',' ')
     out.tmdb_id=s:match('[Tt][Mm][Dd][Bb][%s%-:]*(%d+)')
     local a,b,season,episode=s:find('[Ss](%d+)%s*[Ee](%d+)')
     if not a then a,b,season,episode=s:find('(%d+)[xX](%d+)') end
@@ -64,6 +71,7 @@ function M.parse(raw)
             s=title
         end
     end
+    if parenthesized_season then out.season=parenthesized_season;out.kind='tv' end
     s=cut_technical(s)
     for p,y in s:gmatch('()(%d%d%d%d)') do
         if tonumber(y)>=1900 and tonumber(y)<=2100 and trim(s:sub(1,p-1))~='' then

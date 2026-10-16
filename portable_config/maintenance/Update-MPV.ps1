@@ -7,6 +7,8 @@ $ErrorActionPreference='Stop'
 if($PSVersionTable.PSVersion.Major -eq 5) { $env:PSModulePath=[Environment]::GetEnvironmentVariable('PSModulePath','Machine') }
 [Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12
 $Utf8=New-Object Text.UTF8Encoding($false)
+[Console]::OutputEncoding=$Utf8
+$OutputEncoding=$Utf8
 function Normalize([string]$Text) { return $Text.Replace("`r`n","`n").TrimEnd("`r","`n")+"`n" }
 function Write-Utf8([string]$Path,[string]$Text) {
     [IO.Directory]::CreateDirectory((Split-Path -Parent $Path)) | Out-Null
@@ -35,6 +37,23 @@ function Download-Asset($Asset,[string]$Path) {
 function Copy-Folder([string]$Source,[string]$Destination) {
     [IO.Directory]::CreateDirectory($Destination) | Out-Null
     foreach($item in Get-ChildItem -LiteralPath $Source -Force) { Copy-Item -LiteralPath $item.FullName -Destination $Destination -Recurse -Force }
+}
+function Test-PlayerProcess([string]$ProcessPath,[string]$Executable) {
+    if(!$ProcessPath -or !$Executable) { return $false }
+    return [string]::Equals([IO.Path]::GetFullPath($ProcessPath),[IO.Path]::GetFullPath($Executable),[StringComparison]::OrdinalIgnoreCase)
+}
+function Assert-PlayerClosed([string]$Executable) {
+    # Other installations and the small mpv.exe forwarding launcher do not lock
+    # this executable. The staged smoke-test player is a different path as well.
+    $deadline=[DateTime]::UtcNow.AddSeconds(10)
+    do {
+        $running=@(Get-Process -Name 'mpv','mpv+' -ErrorAction SilentlyContinue | Where-Object {
+            Test-PlayerProcess $_.Path $Executable
+        })
+        if(!$running.Count) { return }
+        Start-Sleep -Milliseconds 250
+    } while([DateTime]::UtcNow -lt $deadline)
+    throw ('Закройте обновляемую копию плеера: '+$Executable)
 }
 if($Library) { return }
 $ConfigRoot=Split-Path -Parent $PSScriptRoot
@@ -109,7 +128,7 @@ if($Mode -eq 'Interactive') {
     if($answer -ieq 'N') { Write-Host 'Обновление отменено.'; exit 0 }
 }
 if($Mode -ne 'Verify') {
-    if(Get-Process -Name mpv,mpv+ -ErrorAction SilentlyContinue) { throw 'Закройте плеер и повторите обновление из меню.' }
+    Assert-PlayerClosed $exe
     $writeRoots=@($ConfigRoot)
     if(@($available | Where-Object {$_.entry.scope -eq 'player'}).Count -gt 0) { $writeRoots+=@($PlayerRoot) }
     foreach($root in $writeRoots) {
@@ -217,7 +236,7 @@ if($process.ExitCode -ne 0 -or $output -notmatch 'MPV_BUILD_OK' -or $output -mat
     throw "Проверка подготовленной сборки не прошла. Установленные файлы не изменены. Материалы: $work"
 }
 if($Mode -eq 'Verify') { Write-Host 'Проверено: загрузка релиза, контрольная сумма, сохранение доработок и запуск скриптов. Установка не выполнялась.'; exit 0 }
-if(Get-Process -Name mpv,mpv+ -ErrorAction SilentlyContinue) { throw 'Закройте mpv и повторите установку обновлений.' }
+Assert-PlayerClosed $exe
 $originalManifest=[IO.File]::ReadAllBytes($manifestPath)
 $undo=New-Object Collections.ArrayList
 try {

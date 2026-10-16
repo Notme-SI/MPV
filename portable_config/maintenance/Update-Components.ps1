@@ -8,8 +8,11 @@ if(!$ResultPath) { $ResultPath=Join-Path $env:APPDATA 'mpv-plus\update-result.js
 $resultDir=Split-Path -Parent $ResultPath
 [IO.Directory]::CreateDirectory($resultDir)|Out-Null
 $logPath=Join-Path $resultDir 'update.log'
+$utf8=New-Object Text.UTF8Encoding($false)
+function Log([string]$Text) { [IO.File]::AppendAllText($logPath,$Text+"`r`n",$utf8) }
 function Quote([string]$Value) { return '"'+$Value.Replace('"','\"')+'"' }
 try {
+    if(!$Elevated) { [IO.File]::WriteAllText($logPath,([DateTime]::Now.ToString('s')+"`r`n"),$utf8) }
     if($WaitProcessId -gt 0) { Wait-Process -Id $WaitProcessId -Timeout 120 -ErrorAction SilentlyContinue }
     if($WaitProcessId -gt 0 -and (Get-Process -Id $WaitProcessId -ErrorAction SilentlyContinue)) { throw 'Player has not exited.' }
     $writable=$true
@@ -18,17 +21,28 @@ try {
     if(!$writable -and !$Elevated) {
         $arguments='-NoProfile -ExecutionPolicy Bypass -File '+(Quote $PSCommandPath)+' -Elevated -ResultPath '+(Quote $ResultPath)
         $child=Start-Process powershell.exe -Verb RunAs -WindowStyle Hidden -ArgumentList $arguments -Wait -PassThru
+        $child.WaitForExit()
         if($child.ExitCode -ne 0) { throw 'Update failed. See update.log.' }
     } else {
         $arguments='-NoProfile -ExecutionPolicy Bypass -File '+(Quote (Join-Path $PSScriptRoot 'Update-MPV.ps1'))+' -Mode Update'
-        $child=Start-Process powershell.exe -WindowStyle Hidden -ArgumentList $arguments -Wait -PassThru -RedirectStandardOutput $logPath -RedirectStandardError ($logPath+'.errors')
+        $stdout=Join-Path $resultDir ('update-'+[guid]::NewGuid().ToString('N')+'.stdout')
+        $stderr=$stdout+'.errors'
+        $child=Start-Process powershell.exe -WindowStyle Hidden -ArgumentList $arguments -PassThru -RedirectStandardOutput $stdout -RedirectStandardError $stderr
+        $null=$child.Handle
+        $child.WaitForExit()
+        foreach($output in @($stdout,$stderr)) {
+            if(Test-Path -LiteralPath $output) {
+                Log ([IO.File]::ReadAllText($output,$utf8))
+                Remove-Item -LiteralPath $output
+            }
+        }
         $success=$child.ExitCode -eq 0
         [IO.File]::WriteAllText($ResultPath,(@{success=$success}|ConvertTo-Json),[Text.UTF8Encoding]::new($false))
         if(!$success) { throw 'Update failed. See update.log.' }
     }
 } catch {
     [IO.File]::WriteAllText($ResultPath,(@{success=$false}|ConvertTo-Json),[Text.UTF8Encoding]::new($false))
-    [IO.File]::AppendAllText($logPath,"`r`n"+$_.Exception.Message)
+    Log ($_.ToString())
     if($Elevated) { exit 1 }
 } finally {
     # The non-elevated coordinator restarts the player with the user's privileges.

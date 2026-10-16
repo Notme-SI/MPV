@@ -99,6 +99,15 @@ return function(path)
         respond(16,{id=60543,russian='Дандадан',english={'Dandadan'}})
         assert(props['user-data/readable-title'].text=='Дандадан · Сезон 2, серия 1: Начало')
         events['end-file']()
+        props['media-title']='[ReinForce] Dan Da Dan (S01) (2024) - 03 [BDRip 1080p x264 FLAC].mkv'
+        props.playlist[1].title=props['media-title']
+        events['file-loaded']();tick()
+        assert(props['user-data/readable-title'].text=='Дандадан · Сезон 1, серия 3','Local title works before network metadata')
+        assert(requests[19].args.args[#requests[19].args.args]:find('/tv/240411/season/1?',1,true),'Parenthesized season uses known anime ID')
+        requests[18].callback(false,{status=7,stdout=''})
+        requests[19].callback(false,{status=7,stdout=''})
+        assert(props['user-data/readable-title'].text=='Дандадан · Сезон 1, серия 3','Network failure retains local title')
+        events['end-file']()
     end,debug.traceback)
     mp=real;package.loaded['mp.options']=options
     assert(ok,err)

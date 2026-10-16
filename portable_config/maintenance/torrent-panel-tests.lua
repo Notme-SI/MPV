@@ -1,0 +1,33 @@
+return function(path)
+    local real=mp
+    local panel=dofile(path('extensions/torrent_panel.lua'))
+    local message='Loading [ReinForce] Dan Da Dan (S01) - 03.mkv...\nCurrent state: caching\nTorrent load info:\nSpeed: 97.46 Mbps\nCache: 0.10 / 0.10 GB\nPeers·Seeders: 16 / 41 · 14\n\n'
+    local parsed=assert(panel.parse(message))
+    assert(parsed.speed=='97.46 Mbps' and parsed.peers=='16 / 41 · 14','Keep TorrServer values')
+    assert(not panel.parse('No response from TorrServer\'s API!'),'Connection errors use ordinary OSD')
+    assert(not panel.parse(''),'Empty OSD is not a stats panel')
+    local russian=panel.render(parsed,'ru',1280,720)
+    assert(russian:find('СТАТИСТИКА СЕТИ',1,true) and russian:find('буферизация',1,true))
+    assert(russian:find('97.46 Mbps',1,true) and russian:find('0.10 / 0.10 ГБ',1,true))
+    assert(panel.render(parsed,'en',1280,720):find('caching',1,true))
+    local overlay={remove=function(self) self.visible=false end,update=function(self) self.visible=true end}
+    local timers,events={},{},{}
+    local ok,err=xpcall(function()
+        mp={
+            create_osd_overlay=function() return overlay end,
+            get_osd_size=function() return 1280,720 end,
+            observe_property=function() end,
+            register_event=function(k,fn) events[k]=fn end,
+            add_timeout=function(_,fn)
+                local t={callback=fn,kill=function(self) self.dead=true end}
+                timers[#timers+1]=t;return t
+            end,
+        }
+        local instance=panel.new({language=function() return 'ru' end})
+        assert(instance.show(message) and overlay.visible)
+        instance.show(message);assert(timers[1].dead,'New statistics reset expiry')
+        timers[2].callback();assert(not overlay.visible,'Panel expires when buffering stops')
+        instance.show(message);events['end-file']();assert(not overlay.visible,'No stale stats on next episode')
+    end,debug.traceback)
+    mp=real;assert(ok,err)
+end

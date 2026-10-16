@@ -1,4 +1,4 @@
-﻿mpv+ 1.0.2 — Windows 10/11 x64
+mpv+ 1.0.3 — Windows 10/11 x64
 
 Запуск: mpv+.exe. Для внешнего плеера Lampa Desktop выберите mpv.exe
 из этой же папки: это совместимый запускатель mpv+.
@@ -22,3 +22,4 @@
 Версии отдельных компонентов и контрольные суммы: portable_config/maintenance/manifest.json.
 Сведения об исходниках: LICENSES/SOURCES.txt. Лицензии: LICENSES и SOURCES.
 https://github.com/Notme-SI/mpv-plus
+

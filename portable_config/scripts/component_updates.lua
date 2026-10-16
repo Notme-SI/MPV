@@ -56,7 +56,7 @@ mp.register_script_message('install',function()
     local pid=mp.get_property_number('pid')
     if not pid then return end
     local result=mp.command_native({name='subprocess',detach=true,
-        args={'powershell.exe','-NoProfile','-WindowStyle','Hidden','-ExecutionPolicy','Bypass','-File',
+        args={'powershell.exe','-NoProfile','-WindowStyle','Normal','-ExecutionPolicy','Bypass','-File',
             root..'/maintenance/Update-Components.ps1','-WaitProcessId',tostring(pid),'-ResultPath',result_path,'-Visible'}})
     if result and result.status==0 then mp.commandv('quit')
     else mp.osd_message(ui.text('Не удалось запустить обновление'),4) end
@@ -70,3 +70,4 @@ mp.add_timeout(1,function()
         mp.osd_message(ui.text(result.success and 'Компоненты обновлены' or 'Обновление не завершено. Откройте журнал.'),5)
     end
 end)
+

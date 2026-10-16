@@ -5,7 +5,7 @@ import zipfile
 import sys
 
 ROOT = Path(__file__).resolve().parent
-ARCHIVE = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else ROOT.parent / 'dist/mpv+-1.0.2.zip'
+ARCHIVE = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else ROOT.parent / 'dist/mpv+-1.0.3.zip'
 EXPECTED = Path(str(ARCHIVE) + '.sha256').read_text(encoding='utf-8-sig').split()[0].lower()
 digest = hashlib.sha256(ARCHIVE.read_bytes()).hexdigest()
 if digest != EXPECTED:
@@ -18,7 +18,7 @@ with zipfile.ZipFile(ARCHIVE) as archive:
         if item.is_dir():
             continue
         parts = Path(item.filename).parts
-        if parts[0] != 'mpv+-1.0.2' or '..' in parts:
+        if len(parts) < 2 or not parts[0].startswith('mpv+-') or '..' in parts:
             raise SystemExit('Unexpected archive path')
         relative = Path(*parts[1:])
         target = payload / relative
@@ -50,3 +50,4 @@ for relative in sorted(manifest):
 (ROOT / 'files.iss').write_text('\n'.join(entries) + '\n', encoding='utf-8-sig')
 (ROOT / 'payload-manifest.json').write_text(json.dumps({'archive_sha256': digest, 'files': manifest, 'preserved': preserved}, indent=2, ensure_ascii=False), encoding='utf-8')
 print(json.dumps({'files': len(manifest), 'bytes': sum(p.stat().st_size for p in payload.rglob('*') if p.is_file()), 'preserved_files': len(preserved)}))
+

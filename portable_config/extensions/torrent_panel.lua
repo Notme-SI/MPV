@@ -19,23 +19,23 @@ end
 function M.render(data,language,w,h)
     local ass=require('mp.assdraw').ass_new()
     local en=language=='en'
-    local scale=math.max(0.65,math.min(1.8,h/720))
-    local x,y=24*scale,24*scale
-    local width=math.min(370*scale,w-2*x)
-    local height=(data.extra~='' and 248 or 224)*scale
+    local scale=math.max(0.8,math.min(2.1,h/720))
+    local width=math.min(430*scale,w-28*scale)
+    local x,y=w-width-24*scale,24*scale
+    local height=(data.extra~='' and 284 or 258)*scale
     ass:new_event()
-    ass:append('{\\an7\\pos(0,0)\\bord0\\shad0\\1c&H202020&\\1a&H20&}')
+    ass:append('{\\an7\\pos(0,0)\\bord0\\shad0\\1c&H202020&\\1a&H48&}')
     ass:draw_start();ass:round_rect_cw(x,y,x+width,y+height,12*scale);ass:draw_stop()
     local function text(value,px,py,size,color,bold,align)
         ass:new_event()
         ass:append(string.format('{\\an%d\\pos(%.1f,%.1f)\\fnSegoe UI\\fs%.1f\\1c&H%s&\\bord0\\shad0\\b%d}%s',
             align or 7,px,py,size*scale,color,bold and 1 or 0,escape(value)))
     end
-    text(en and 'NETWORK STATISTICS' or 'СТАТИСТИКА СЕТИ',x+18*scale,y+15*scale,15,'C8C8C8',true)
-    text(shorten(data.file,48),x+18*scale,y+44*scale,12,'9B9B9B')
+    text(en and 'NETWORK STATISTICS' or 'СТАТИСТИКА СЕТИ',x+20*scale,y+18*scale,18,'C8C8C8',true)
+    text(shorten(data.file,52),x+20*scale,y+52*scale,14,'9B9B9B')
     ass:new_event()
     ass:append('{\\an7\\pos(0,0)\\bord0\\shad0\\1c&HFFFFFF&\\1a&HE0&}')
-    ass:draw_start();ass:rect_cw(x+18*scale,y+70*scale,x+width-18*scale,y+71*scale);ass:draw_stop()
+    ass:draw_start();ass:rect_cw(x+20*scale,y+82*scale,x+width-20*scale,y+83*scale);ass:draw_stop()
     local state=data.state
     if not en then
         state=state:gsub('connecting external files','подключение внешних файлов'):gsub('opening','открытие'):gsub('caching','буферизация')
@@ -48,14 +48,14 @@ function M.render(data,language,w,h)
         {en and 'Peers · seeders' or 'Пиры · сиды',data.peers},
     }
     for i,row in ipairs(rows) do
-        local yy=y+(83+(i-1)*32)*scale
-        text(row[1],x+18*scale,yy,14,'999999')
-        text(row[2],x+width-18*scale,yy,14,'FFFFFF',true,9)
+        local yy=y+(98+(i-1)*38)*scale
+        text(row[1],x+20*scale,yy,17,'999999')
+        text(row[2],x+width-20*scale,yy,17,'FFFFFF',true,9)
     end
     if data.extra~='' then
         local extra=data.extra
         if not en then extra=extra:gsub('Connected ','Подключено '):gsub(' external files',' внешних файлов'):gsub('Errors:','Ошибки:') end
-        text(shorten(extra,48),x+18*scale,y+218*scale,12,'999999')
+        text(shorten(extra,52),x+20*scale,y+258*scale,14,'999999')
     end
     return ass.text
 end

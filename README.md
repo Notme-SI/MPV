@@ -2,7 +2,7 @@
 
 **mpv+** неофициальная сборка [mpv](https://mpv.io/) с настроенным интерфейсом, интеграцией TorrServer и дополнительными функциями для просмотра фильмов, сериалов и аниме. Может использоваться самостоятельно или как внешний плеер в Lampa.
 
-[![Latest release](https://img.shields.io/github/v/release/Notme-SI/mpv-plus?style=flat-square&label=mpv%2B&color=7c3aed)](https://github.com/Notme-SI/mpv-plus/releases/latest) [![Windows x64](https://img.shields.io/badge/Windows-10%2F11_x64-0078D4?style=flat-square)](https://github.com/Notme-SI/mpv-plus/releases/latest)
+[![mpv+](https://img.shields.io/badge/mpv%2B-Media_Player-7c3aed?style=flat-square)](https://github.com/Notme-SI/mpv-plus/releases/latest) [![Windows x64](https://img.shields.io/badge/Windows-10%2F11_x64-0078D4?style=flat-square)](https://github.com/Notme-SI/mpv-plus/releases/latest)
 
 ## Скачать
 

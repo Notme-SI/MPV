@@ -16,7 +16,7 @@
 - [История изменений](https://github.com/Notme-SI/mpv-plus/blob/main/CHANGELOG.md) · [Исходники и лицензии](https://github.com/Notme-SI/mpv-plus/blob/main/SOURCES.txt)
 
 <p align="center">
-  <img src="https://img.shields.io/github/downloads/Notme-SI/mpv-plus/v1.0.2/total?style=flat-square&label=Downloads&color=76b900" alt="Скачивания v1.0.2">
+  <img src="https://img.shields.io/badge/mpv%2B-v1.0.2-7c3aed?style=flat-square" alt="mpv+ v1.0.2">
 </p>
 
 ### 📥 Скачать

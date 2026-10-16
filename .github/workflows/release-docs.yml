@@ -1,0 +1,27 @@
+name: Update release downloads
+
+on:
+  release:
+    types: [published, edited]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-docs
+  cancel-in-progress: false
+
+jobs:
+  downloads:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const { syncDownloads } = require('./tools/update-release-docs.cjs');
+            await syncDownloads({ github, context, core });

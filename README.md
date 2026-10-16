@@ -2,16 +2,21 @@
 
 **mpv+** неофициальная сборка [mpv](https://mpv.io/) с настроенным интерфейсом, интеграцией TorrServer и дополнительными функциями для просмотра фильмов, сериалов и аниме. Может использоваться самостоятельно или как внешний плеер в Lampa.
 
-**Windows 10/11 x64** · Версия исходников: [`VERSION`](VERSION) · [Последний выпуск](https://github.com/Notme-SI/mpv-plus/releases/latest)
+[![Latest release](https://img.shields.io/github/v/release/Notme-SI/mpv-plus?style=flat-square&label=mpv%2B&color=7c3aed)](https://github.com/Notme-SI/mpv-plus/releases/latest) [![Windows x64](https://img.shields.io/badge/Windows-10%2F11_x64-0078D4?style=flat-square)](https://github.com/Notme-SI/mpv-plus/releases/latest)
 
 ## Скачать
 
-| Вариант | Назначение |
-| --- | --- |
-| Установщик `mpv+-<версия>-Setup.exe` | Установка с выбором папки и созданием ярлыков |
-| Портативная версия `mpv+-<версия>.zip` | Запуск из распакованной папки без установки |
+<!-- release-downloads:start -->
+**Актуальная версия: [1.0.3](https://github.com/Notme-SI/mpv-plus/releases/tag/v1.0.3) · Windows 10/11 x64**
 
-Оба файла доступны на [странице последнего выпуска](https://github.com/Notme-SI/mpv-plus/releases/latest). Описание изменений и контрольные суммы находятся в каталоге [`releases`](releases) для соответствующего выпуска.
+| Система | Установщик | Портативная версия |
+| --- | --- | --- |
+| Windows 10/11 x64 | [![Setup x64](https://img.shields.io/badge/Windows-Setup_x64-0078D4?style=flat-square)](https://github.com/Notme-SI/mpv-plus/releases/download/v1.0.3/mpv%2B-1.0.3-Setup.exe) | [![Portable x64](https://img.shields.io/badge/Windows-Portable_x64-2496ED?style=flat-square)](https://github.com/Notme-SI/mpv-plus/releases/download/v1.0.3/mpv%2B-1.0.3.zip) |
+
+Установщик — установка с выбором папки и созданием ярлыков. Портативная версия — запуск из распакованной папки.
+
+[Все выпуски](https://github.com/Notme-SI/mpv-plus/releases) · [Изменения](https://github.com/Notme-SI/mpv-plus/releases/tag/v1.0.3) · [Контрольные суммы](releases/1.0.3/SHA256SUMS.txt)
+<!-- release-downloads:end -->
 
 ## Возможности
 
@@ -72,6 +77,7 @@
 - [Краткая инструкция из комплекта поставки](README.txt)
 - [История изменений](CHANGELOG.md)
 - [Сборка ZIP и установщика](BUILD.md)
+- [Оформление выпусков и обновление ссылок](docs/RELEASES.md)
 - [Устройство доработок и обновление компонентов](portable_config/maintenance/README.txt)
 - [Состав сборки и источники компонентов](SOURCES.txt)
 - [Лицензии](LICENSE)

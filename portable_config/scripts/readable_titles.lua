@@ -10,6 +10,14 @@ local active=false
 local generation=0
 local current,language
 local display_details={}
+-- Local fallbacks for anime names when TMDB is unavailable or returns only an English title.
+local local_titles={
+    ['dandadan']='Дандадан',
+}
+local function local_title(data,lang)
+    if lang~='ru' or not data then return nil end
+    return local_titles[fmt.normalize(data.title or '')]
+end
 local requests,cache,pending={},{},{}
 local cache_order={}
 local timer
@@ -86,13 +94,15 @@ local function refresh()
     display_details={}
     local gen=generation
     publish(data)
+    local fallback_title=local_title(data,lang)
+    if fallback_title then publish(data,fallback_title) end
     if not opts.online or data.title=='' or not token or token=='' then return end
     local locale=lang
     local function anime_fallback()
         if not data.mal_id then return end
         get('shikimori/animes/'..data.mal_id,function(details)
             if gen~=generation or not details or tostring(details.id)~=tostring(data.mal_id) then return end
-            local title=lang=='ru' and details.russian or (details.english or {})[1]
+            local title=local_title(data,lang) or (lang=='ru' and details.russian or (details.english or {})[1])
             if title and title~='' then publish(data,title) end
         end)
     end
@@ -102,9 +112,9 @@ local function refresh()
         get(endpoint..'?language='..locale,function(details)
             if gen~=generation then return end
             if not details then anime_fallback();return end
-            local title=details.name or details.title
+            local title=local_title(data,lang) or details.name or details.title
             publish(data,title)
-            if lang=='ru' and title and not title:find('[\208\209]') then anime_fallback() end
+            if lang=='ru' and title and (local_title(data,lang) or not title:find('[\208\209]')) then anime_fallback() end
             if data.kind=='tv' and data.episode then
                 get(endpoint..'/season/'..(data.tmdb_season or data.season or 1)..'?language='..locale,function(season)
                     if gen~=generation or not season then return end
